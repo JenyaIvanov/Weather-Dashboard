@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 // Icon Imports
-import { FaWind } from "react-icons/fa6";
+import { FaWind, FaGear  } from "react-icons/fa6";
 import { MdOutlineWaterDrop } from "react-icons/md";
 import { IoThermometerOutline } from "react-icons/io5";
 import { BsThermometer, BsThermometerHigh } from "react-icons/bs";
@@ -99,7 +99,7 @@ const Weather: React.FC = () => {
 
   //  Variables Manipulation
   let AM_PM = "Day"; // Default value
-  let background_image = "bg-bg_ClearDay"; // Default value
+  let background_image = "./img/background/ClearDay.jpeg"; // Default value
 
 
   if(timeData?.hour > 19 && timeData?.hour < 6){
@@ -111,7 +111,7 @@ const Weather: React.FC = () => {
   }
 
   if(weatherData != null){
-    background_image = "bg-bg_" + weatherData?.weather[0]?.main + AM_PM;
+    background_image = "./img/background/" + weatherData?.weather[0]?.main + AM_PM + ".jpeg";
   }
 
   return (
@@ -123,16 +123,23 @@ const Weather: React.FC = () => {
         <div className=''>
           
           <div 
-              className={"font-poppins h-[28rem] rounded-[10%] bg-cover " 
-              + background_image
-              + " p-3"}
+              style={{backgroundImage: 'url('+background_image+')'}}
+              className={"font-poppins h-[28rem] rounded-[10%] p-3 bg-cover"}
           >
             
             <p>DEBUG Background: {weatherData?.weather[0]?.main}</p>
-            <div className='flex items-start ms-3'>
-              <p className='me-2'>{timeData?.day }</p>
-              <p className=''>{months[timeData?.month-1]},</p>
-              <p className='font-thin ms-1'>{timeData?.dayOfWeek}</p>
+            <div className='flex flex-row justify-between m-2 drop-shadow-md'>
+
+              <div className='flex items-start'>
+                <p className='me-2'>{timeData?.day }</p>
+                <p className=''>{months[timeData?.month-1]},</p>
+                <p className='font-thin ms-1'>{timeData?.dayOfWeek}</p>
+              </div>
+
+              <div className='flex flex-row gap-2 hover:text-yellow-100'>
+                  <FaGear className='text-xl'/>
+                  <p className='font-thin'>Settings</p>
+              </div>
             </div>
 
             <div className='ms-12 mt-[3rem] flex-row text-center drop-shadow-md'>
@@ -156,22 +163,22 @@ const Weather: React.FC = () => {
           
 
 
-          <div> 
+          <div className='flex flex-row p-1 justify-between m-1 drop-shadow-md'> 
 
-            <div>
-              <MdOutlineWaterDrop />
+            <div className='p-7 font-thin rounded-[20%] bg-gradient-to-b from-blue-400 from-60% to-purple-400'>
+              <MdOutlineWaterDrop className='ms-[-0.2rem]' />
               <p> Humidity </p> 
               <p> {weatherData?.main?.humidity}%</p>
             </div>
 
-            <div>
-              <IoThermometerOutline />
+            <div className='p-7 font-thin rounded-[20%] bg-gradient-to-b from-blue-400 from-60% to-purple-400'>
+              <IoThermometerOutline className='ms-[-0.2rem]' />
               <p> Pressure </p> 
               <p> {weatherData?.main?.pressure} MB</p>
             </div>
 
-            <div>
-              <FaWind />
+            <div className='p-7 font-thin rounded-[20%] bg-gradient-to-b from-blue-400 from-60% to-purple-400'>
+              <FaWind className='ms-[-0.1rem]' />
               <p> Wind </p> 
               <p> {weatherData?.wind?.speed} km/h</p>
             </div>
@@ -188,25 +195,25 @@ const Weather: React.FC = () => {
 
             <div>
               <p>{forecastData?.list[1]?.dt_txt?.substring(10,16)}</p>
-              <p>ICON {forecastData?.list[1]?.weather[0]?.main}</p>
+              <img src={CloudyIcon} className="flex size-[3rem] h-full" alt={"Cloudy Weather"} />
               <p>{('' + forecastData?.list[1]?.main?.temp).substring(0,2)}°</p>
             </div>
 
             <div>
               <p>{forecastData?.list[2]?.dt_txt?.substring(10,16)}</p>
-              <p>ICON {forecastData?.list[2]?.weather[0]?.main}</p>
+              <img src={CloudyIcon} className="flex size-[3rem] h-full" alt={"Cloudy Weather"} />
               <p>{('' + forecastData?.list[2]?.main?.temp).substring(0,2)}°</p>
             </div>
 
             <div>
               <p>Tommorow</p>
-              <p>ICON {forecastData?.list[8]?.weather[0]?.main}</p>
+              <img src={CloudyIcon} className="flex size-[3rem] h-full" alt={"Cloudy Weather"} />
               <p>{('' + forecastData?.list[8]?.main?.temp).substring(0,2)}°</p>
             </div>
 
             <div>
               <p>{days[timeData?.day+2]}</p>
-              <p>ICON {forecastData?.list[8]?.weather[0]?.main}</p>
+              <img src={CloudyIcon} className="flex size-[3rem] h-full" alt={"Cloudy Weather"} />
               <p>{('' + forecastData?.list[8]?.main?.temp).substring(0,2)}°</p>
             </div>
             
