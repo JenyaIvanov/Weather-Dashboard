@@ -4,7 +4,7 @@ import Weather from './components/Weather';
 
 const App: React.FC = () => {
   return (
-    <div className="Cloudy">
+    <div className="h-screen p-1 bg-slate-800 bg-opacity-80 shadow-md text-white drop-shadow-lg">
       <Weather />
     </div>
   );
