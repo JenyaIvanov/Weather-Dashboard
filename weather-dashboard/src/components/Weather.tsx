@@ -1,6 +1,7 @@
 // Imports
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Modal from './Modal';
 
 // Icon Imports
 import { FaWind, FaGear  } from "react-icons/fa6";
@@ -8,6 +9,7 @@ import { MdOutlineWaterDrop } from "react-icons/md";
 import { IoThermometerOutline } from "react-icons/io5";
 import { BsThermometer, BsThermometerHigh } from "react-icons/bs";
 import CloudyIcon from './icon/CloudyIcon.png';
+import DefaultLocation from './location/DefaultLocation.jpeg';
 import { FaGithub } from "react-icons/fa";
 
 // Weather App
@@ -15,6 +17,7 @@ const Weather: React.FC = () => {
   const [weatherData, setWeatherData] = useState<any>(null);
   const [timeData, setTimeData] = useState<any>(null);
   const [forecastData, setForecastData] = useState<any>(null);
+  const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
 
   // Help Variables
   const months = [
@@ -117,12 +120,12 @@ const Weather: React.FC = () => {
 
   return (
 
-    // Weather Dashboard HTML
-
+    
+    
     <div>
       {weatherData && (
         <div className='mt-2'>
-          
+
           <div 
               style={{backgroundImage: 'url('+background_image+')'}}
               className={"font-poppins h-[28rem] rounded-[8%] p-3 bg-cover"}
@@ -218,13 +221,50 @@ const Weather: React.FC = () => {
             
 
           </div>
-            <footer className='mt-7 rounded-lg shadow dark:bg-zinc-800 p-1 pt-3 pb-3 align-middle flex flex-row justify-between'>
-              <div className='m-2 flex flex-row gap-[0.4rem] hover:text-yellow-100'>
-                <FaGear className='text-xl mt-[0.15rem]'/>
-                <p className='font-thin'>Settings</p>
-              </div>
+            <footer className='mt-5 rounded-lg shadow dark:bg-zinc-800 p-1 pt-3 pb-3 align-middle flex flex-row justify-between'>
+              
+              <button onClick={() => setSettingsOpen(true)}>
+                <div className='m-1 flex flex-row gap-[0.4rem] hover:text-yellow-100'>
+                  <FaGear className='text-xl mt-[0.15rem]'/>
+                  <p className='font-thin'>Settings</p>
+                </div>
+              </button>
 
-              <div className='flex flex-row m-[0.6rem]'>
+              <div className={settingsOpen ? "visible" : "invisible"}>
+                <Modal settingsOpen={settingsOpen} onClose={() => setSettingsOpen(false)}>
+                  
+                  <div className='flex flex-row justify-between mt-5 bg-gradient-to-r from-teal-900 from-40% to-cyan-700 scale-[123%] rounded-md p-2'>
+                    <div className='font-poppins font-thin text-xs'>
+                      <h3>LOCATION NAME</h3>
+                      <p>DEGREES</p>
+                      <p>WEATHER DESCRIPTION</p>
+                    </div>
+                    <img src={DefaultLocation} className="scale-100 rounded-md drop-shadow-md" width={85} alt={"Cloudy Weather"} />
+                  </div>
+
+
+                  <div className='mt-7 font-poppins font-thin text-sm'>
+                    <p>Change location</p>
+                    <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Enter City Name" />
+
+                    <div className='mt-3'>
+                      <p>Degrees unit</p>
+                      <div className="flex items-center">
+                        <input id="default-radio-1" type="radio" value="" name="default-radio" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                        <label  className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Fahrenheit</label>
+                      </div>
+                      <div className="flex items-center">
+                        <input checked id="default-radio-2" type="radio" value="" name="default-radio" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                        <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Celsius</label>
+                      </div>
+                    </div>
+                    
+                  </div>
+                </Modal>
+              </div>
+              
+
+              <div className='flex flex-row mt-4 m-[0.6rem]'>
                 <p className='text-sm font-thin me-1'>Created by </p>
                 <a href="https://www.linkedin.com/in/jenya-ivanov-a8a82a200/" className='text-sm font-thin me-1 hover:cursor-pointer text-yellow-400'>Jenya Ivanov</a>
                 <p className='text-sm font-thin'>2024®</p>
@@ -232,6 +272,7 @@ const Weather: React.FC = () => {
                   <FaGithub className='text-3xl ms-2 mt-[-0.4rem]' />
                 </a>
               </div>
+
             </footer>
 
 
