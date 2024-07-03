@@ -8,6 +8,7 @@ import { MdOutlineWaterDrop } from "react-icons/md";
 import { IoThermometerOutline } from "react-icons/io5";
 import { BsThermometer, BsThermometerHigh } from "react-icons/bs";
 import CloudyIcon from './icon/CloudyIcon.png';
+import { FaGithub } from "react-icons/fa";
 
 // Weather App
 const Weather: React.FC = () => {
@@ -120,15 +121,14 @@ const Weather: React.FC = () => {
 
     <div>
       {weatherData && (
-        <div className=''>
+        <div className='mt-2'>
           
           <div 
               style={{backgroundImage: 'url('+background_image+')'}}
-              className={"font-poppins h-[28rem] rounded-[10%] p-3 bg-cover"}
+              className={"font-poppins h-[28rem] rounded-[8%] p-3 bg-cover"}
           >
-            
-            <p>DEBUG Background: {weatherData?.weather[0]?.main}</p>
-            <div className='flex flex-row justify-between m-2 drop-shadow-md'>
+          
+            <div className='flex flex-row justify-between mt-4 m-1 drop-shadow-md text-[1.1rem]'>
 
               <div className='flex items-start'>
                 <p className='me-2'>{timeData?.day }</p>
@@ -136,20 +136,16 @@ const Weather: React.FC = () => {
                 <p className='font-thin ms-1'>{timeData?.dayOfWeek}</p>
               </div>
 
-              <div className='flex flex-row gap-2 hover:text-yellow-100'>
-                  <FaGear className='text-xl'/>
-                  <p className='font-thin'>Settings</p>
-              </div>
             </div>
 
-            <div className='ms-12 mt-[3rem] flex-row text-center drop-shadow-md'>
-                <p className='font-poppins font-thin text-sm'> {weatherData?.name}</p>
-                <p className='font-poppins font-bold text-6xl'> {(''+weatherData?.main?.temp).substring(0,2)}°C  </p>
-                <p className='font-poppins font-thin text-sm'> Feels Like {Math.floor(weatherData?.main?.feels_like)}°C </p>
-                <p> {weatherData?.weather[0]?.main}</p>
+            <div className='ms-[4.5rem] mt-[4.3rem] flex-row text-center drop-shadow-md font-poppins'>
+                <p className='font-normal text-normal'> {weatherData?.name}</p>
+                <p className='font-bold text-[4rem] m-[-1rem]'> {(''+weatherData?.main?.temp).substring(0,2)}°C  </p>
+                <p className='font-thin text-normal'> Feels Like {Math.floor(weatherData?.main?.feels_like)}°C </p>
+                <p className='font-normal text-[1.3rem] m-[-0.4rem]'> {weatherData?.weather[0]?.main}</p>
             </div>
 
-            <div className='m-5 p-1 flex flex-row justify-between text-center mt-[10rem] drop-shadow-md text-sm font-poppins font-thin'>
+            <div className='m-4 p-1 flex flex-row justify-between text-center mt-[9.5rem] drop-shadow-md text-sm font-poppins font-thin'>
               <div className='flex gap-1'>
                 <BsThermometerHigh className='text-xl'/>
                 <p>Max {(''+weatherData?.main?.temp_max).substring(0,2)}°C</p>
@@ -163,62 +159,81 @@ const Weather: React.FC = () => {
           
 
 
-          <div className='flex flex-row p-1 justify-between m-1 drop-shadow-md'> 
+          <div className='flex flex-row p-1 mt-2 m-1 justify-between drop-shadow-md text-[1.2rem]'> 
 
-            <div className='p-7 font-thin rounded-[20%] bg-gradient-to-b from-blue-400 from-60% to-purple-400'>
+          <div className='p-[1.5rem] font-thin rounded-[20%] bg-gradient-to-tl from-blue-400 from-50% to-purple-400'>
               <MdOutlineWaterDrop className='ms-[-0.2rem]' />
               <p> Humidity </p> 
               <p> {weatherData?.main?.humidity}%</p>
             </div>
 
-            <div className='p-7 font-thin rounded-[20%] bg-gradient-to-b from-blue-400 from-60% to-purple-400'>
+            <div className='p-[1.5rem] font-thin rounded-[20%] bg-gradient-to-tr from-blue-400 from-50% to-purple-400'>
               <IoThermometerOutline className='ms-[-0.2rem]' />
               <p> Pressure </p> 
               <p> {weatherData?.main?.pressure} MB</p>
             </div>
 
-            <div className='p-7 font-thin rounded-[20%] bg-gradient-to-b from-blue-400 from-60% to-purple-400'>
-              <FaWind className='ms-[-0.1rem]' />
+            <div className='p-[1.5rem] font-thin rounded-[20%] bg-gradient-to-b from-blue-400 from-50% to-purple-400'>
+              <FaWind className='ms-[0rem]' />
               <p> Wind </p> 
               <p> {weatherData?.wind?.speed} km/h</p>
             </div>
 
           </div>
 
-          <div>
+          <div className='
+                  p-2 pt-6 pb-6 text-center items-center align-middle mt-2 mb-3
+                  font-poppins flex flex-row justify-between drop-shadow-md
+                  bg-zinc-700 bg-opacity-30 rounded-3xl'>
             
-            <div>
-              <p>NOW</p>
-              <img src={CloudyIcon} className="flex size-[3rem] h-full" alt={"Cloudy Weather"} />
-              <p>{weatherData?.main?.temp}°</p>
+          <div className='p-1'>              
+              <p className='font-thin text-sm'>NOW</p>
+              <img src={CloudyIcon} className="scale-75" width={55} alt={"Cloudy Weather"} />
+              <p>{(''+weatherData?.main?.temp).substring(0,2)}°</p>
             </div>
 
-            <div>
-              <p>{forecastData?.list[1]?.dt_txt?.substring(10,16)}</p>
-              <img src={CloudyIcon} className="flex size-[3rem] h-full" alt={"Cloudy Weather"} />
+            <div className='p-1'>              
+              <p className='font-thin text-sm'>{forecastData?.list[1]?.dt_txt?.substring(10,16)}</p>
+              <img src={CloudyIcon} className="scale-75" width={55} alt={"Cloudy Weather"} />
               <p>{('' + forecastData?.list[1]?.main?.temp).substring(0,2)}°</p>
             </div>
 
-            <div>
-              <p>{forecastData?.list[2]?.dt_txt?.substring(10,16)}</p>
-              <img src={CloudyIcon} className="flex size-[3rem] h-full" alt={"Cloudy Weather"} />
+            <div className='p-1'>              
+              <p className='font-thin text-sm'>{forecastData?.list[2]?.dt_txt?.substring(10,16)}</p>
+              <img src={CloudyIcon} className="scale-75" width={55} alt={"Cloudy Weather"} />
               <p>{('' + forecastData?.list[2]?.main?.temp).substring(0,2)}°</p>
             </div>
 
-            <div>
-              <p>Tommorow</p>
-              <img src={CloudyIcon} className="flex size-[3rem] h-full" alt={"Cloudy Weather"} />
+            <div className='p-1'>
+              <p className='font-thin text-sm'>Tomorrow</p>
+              <img src={CloudyIcon} className="scale-75 ms-1" width={55} alt={"Cloudy Weather"} />
               <p>{('' + forecastData?.list[8]?.main?.temp).substring(0,2)}°</p>
             </div>
 
-            <div>
-              <p>{days[timeData?.day+2]}</p>
-              <img src={CloudyIcon} className="flex size-[3rem] h-full" alt={"Cloudy Weather"} />
-              <p>{('' + forecastData?.list[8]?.main?.temp).substring(0,2)}°</p>
+            <div className='p-1'>              
+              <p className='font-thin text-sm'>{days[timeData?.day+2]}</p>
+              <img src={CloudyIcon} className="scale-75" width={55} alt={"Cloudy Weather"} />
+              <p>{('' + forecastData?.list[17]?.main?.temp).substring(0,2)}°</p>
             </div>
             
 
           </div>
+            <footer className='mt-7 rounded-lg shadow dark:bg-zinc-800 p-1 pt-3 pb-3 align-middle flex flex-row justify-between'>
+              <div className='m-2 flex flex-row gap-[0.4rem] hover:text-yellow-100'>
+                <FaGear className='text-xl mt-[0.15rem]'/>
+                <p className='font-thin'>Settings</p>
+              </div>
+
+              <div className='flex flex-row m-[0.6rem]'>
+                <p className='text-sm font-thin me-1'>Created by </p>
+                <a href="https://www.linkedin.com/in/jenya-ivanov-a8a82a200/" className='text-sm font-thin me-1 hover:cursor-pointer text-yellow-400'>Jenya Ivanov</a>
+                <p className='text-sm font-thin'>2024®</p>
+                <a href="https://github.com/JenyaIvanov" className='hover:cursor-pointer hover:text-teal-400'>
+                  <FaGithub className='text-3xl ms-2 mt-[-0.4rem]' />
+                </a>
+              </div>
+            </footer>
+
 
         </div>
       )}
