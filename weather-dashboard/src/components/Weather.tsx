@@ -1,5 +1,5 @@
 // Imports
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import axios from 'axios';
 import Modal from './Modal';
 
@@ -11,6 +11,9 @@ import { BsThermometer, BsThermometerHigh } from "react-icons/bs";
 import CloudyIcon from './icon/CloudyIcon.png';
 import DefaultLocation from './location/DefaultLocation.jpeg';
 import { FaGithub } from "react-icons/fa";
+import { VscCompass } from "react-icons/vsc";
+import { TiWeatherCloudy } from "react-icons/ti";
+import { IoMdInformationCircleOutline } from "react-icons/io";
 
 // Weather App
 const Weather: React.FC = () => {
@@ -18,6 +21,10 @@ const Weather: React.FC = () => {
   const [timeData, setTimeData] = useState<any>(null);
   const [forecastData, setForecastData] = useState<any>(null);
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
+  const [weatherLocation, setWeatherLocation] = useState<string>("Tokyo");
+
+  // Timezones
+  var cityTimezones = require('city-timezones');
 
   // Help Variables
   const months = [
@@ -45,50 +52,82 @@ const Weather: React.FC = () => {
     "Saturday"
   ];
 
-  useEffect(() => {
-    
-    // Functions
+  function handleSubmit(e:any) {
+    // Prevent the browser from reloading the page
+    e.preventDefault();
 
-    // Weather API Request
+    // Read the form data
+    // console.log(e.target[0]?.value);
+    // console.log(weatherLocation);
+
+    const location = e.target[0]?.value;
+    //console.log('Location Changed To: '+ location);
+    setWeatherLocation(location);
+    
+  }
+
+
+
+
+
+  useEffect(() => {
     const fetchWeatherData = async () => {
       try {        
-
+  
         // Weather Data
-        const weather_response = await axios.get('http://localhost:5000/weather/');
+        const backend_url = 'http://localhost:5000/weather/'
+  
+        const weather_response = await axios.get(backend_url, {params: {city: weatherLocation}});
         setWeatherData(weather_response.data);
-
+  
         //console.log(weather_response.data)
-
+  
       } catch (error) {
         console.error('Error fetching weather data:', error);
       }
     };
-
+  
         // Weather Forcast API Request
         const fetchForecastData = async () => {
           try {        
     
             // Weather Data
-            const forecast_response = await axios.get('http://localhost:5000/forecast/');
+            const backend_url = 'http://localhost:5000/forecast/';
+            const forecast_response = await axios.get(backend_url,{params: {city: weatherLocation}});
             setForecastData(forecast_response.data);
     
             //console.log(forecast_response.data)
-
+  
           } catch (error) {
             console.error('Error fetching weather data:', error);
           }
         };
-
+  
     // Local Time API Request
     const fetchTimeData = async () => {
       try {
 
+        let timezone = "Europe"; // Default Value
+  
         // Time Data
-        const time_response = await axios.get('https://timeapi.io/api/Time/current/zone?timeZone=Europe/London');
+        const timezone_api_url = 'https://timeapi.io/api/Time/current/zone?timeZone=';
+        
+        // Get Timezone for a city
+        const getTimeZone = cityTimezones.lookupViaCity(weatherLocation);
+        console.log(getTimeZone);
+
+        if(weatherLocation == "London"){ // Special condition for multiple cities with same name.
+          timezone = (getTimeZone[1].timezone).split('/')[0];
+        } else {
+          timezone = (getTimeZone[0].timezone).split('/')[0];
+        }
+        console.log('[DEBUG] Location: ' + weatherLocation + '. Timezone: ' + timezone);
+  
+        const time_response = await axios.get(timezone_api_url+timezone+'/'+weatherLocation);
         setTimeData(time_response.data);
-
+  
         //console.log(time_response)
-
+  
       } catch (error) {
         console.error('Error fetching time data:', error);
       }
@@ -99,14 +138,16 @@ const Weather: React.FC = () => {
     fetchWeatherData();
     fetchTimeData();
   }
-  , []);
+  , [weatherLocation]);
+
+  
 
   //  Variables Manipulation
   let AM_PM = "Day"; // Default value
   let background_image = "./img/background/ClearDay.jpeg"; // Default value
 
 
-  if(timeData?.hour > 19 && timeData?.hour < 6){
+  if(timeData?.hour > 19 || timeData?.hour >= 0 && timeData?.hour < 6){
     AM_PM = "Night";
   }
     
@@ -124,59 +165,59 @@ const Weather: React.FC = () => {
     
     <div>
       {weatherData && (
-        <div className='mt-2'>
+        <div className='mt-1'>
 
           <div 
               style={{backgroundImage: 'url('+background_image+')'}}
-              className={"font-poppins h-[28rem] rounded-[8%] p-3 bg-cover"}
+              className={"font-poppins h-[30rem] rounded-[8%] p-1 bg-cover"}
           >
           
-            <div className='flex flex-row justify-between mt-4 m-1 drop-shadow-md text-[1.1rem]'>
+            <div className='flex flex-row mt-4 justify-between ms-[1rem] text-[1.1rem]'>
 
               <div className='flex items-start'>
-                <p className='me-2'>{timeData?.day }</p>
-                <p className=''>{months[timeData?.month-1]},</p>
-                <p className='font-thin ms-1'>{timeData?.dayOfWeek}</p>
+                <p className='me-2 drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]'>{timeData?.day }</p>
+                <p className='drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]'>{months[timeData?.month-1]},</p>
+                <p className='font-thin ms-1 drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]'>{timeData?.dayOfWeek}</p>
               </div>
 
             </div>
 
-            <div className='ms-[4.5rem] mt-[4.3rem] flex-row text-center drop-shadow-md font-poppins'>
-                <p className='font-normal text-normal'> {weatherData?.name}</p>
-                <p className='font-bold text-[4rem] m-[-1rem]'> {(''+weatherData?.main?.temp).substring(0,2)}°C  </p>
-                <p className='font-thin text-normal'> Feels Like {Math.floor(weatherData?.main?.feels_like)}°C </p>
-                <p className='font-normal text-[1.3rem] m-[-0.4rem]'> {weatherData?.weather[0]?.main}</p>
+            <div className='ms-[4.5rem] mt-[6.5rem] scale-[115%] flex-row text-center font-poppins'>
+                <p className='font-normal text-normal mb-[-1.3rem] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.5)]'> {weatherData?.name}</p>
+                <p className='font-bold text-[4rem] m-[-1rem] drop-shadow-lg'> {(''+weatherData?.main?.temp).substring(0,2)}°C  </p>
+                <p className='font-thin text-sm drop-shadow-lg'> Feels Like {Math.floor(weatherData?.main?.feels_like)}°C </p>
+                <p className='font-normal text-[1.3rem] m-[-0.4rem] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]'> {weatherData?.weather[0]?.main}</p>
             </div>
 
-            <div className='m-4 p-1 flex flex-row justify-between text-center mt-[9.5rem] drop-shadow-md text-sm font-poppins font-thin'>
+            <div className='m-4 p-1 flex flex-row justify-between text-center mt-[10rem] drop-shadow-md text-sm font-poppins font-thin'>
               <div className='flex gap-1'>
                 <BsThermometerHigh className='text-xl'/>
-                <p>Max {(''+weatherData?.main?.temp_max).substring(0,2)}°C</p>
+                <p className='drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]'>Max {(''+weatherData?.main?.temp_max).substring(0,2)}°C</p>
               </div>
               <div className='flex gap-1'>
                   <BsThermometer className='text-xl'/>
-                  <p>Min {(''+weatherData?.main?.temp_min).substring(0,2)}°C</p>
+                  <p className='drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]'>Min {(''+weatherData?.main?.temp_min).substring(0,2)}°C</p>
               </div>
             </div>
           </div>
           
 
 
-          <div className='flex flex-row p-1 mt-2 m-1 justify-between drop-shadow-md text-[1.2rem]'> 
+          <div className='flex flex-row mt-[0.5rem] m-1 justify-between drop-shadow-md text-[1.2rem]'> 
 
-          <div className='p-[1.5rem] font-thin rounded-[20%] bg-gradient-to-tl from-blue-400 from-50% to-purple-400'>
+          <div className='p-[1.4rem] font-thin rounded-[20%] bg-gradient-to-tl from-blue-400 from-50% to-purple-400'>
               <MdOutlineWaterDrop className='ms-[-0.2rem]' />
               <p> Humidity </p> 
               <p> {weatherData?.main?.humidity}%</p>
             </div>
 
-            <div className='p-[1.5rem] font-thin rounded-[20%] bg-gradient-to-tr from-blue-400 from-50% to-purple-400'>
+            <div className='p-[1.4rem] px-[1.7rem] font-thin rounded-[20%] bg-gradient-to-tr from-blue-400 from-50% to-purple-400'>
               <IoThermometerOutline className='ms-[-0.2rem]' />
               <p> Pressure </p> 
               <p> {weatherData?.main?.pressure} MB</p>
             </div>
 
-            <div className='p-[1.5rem] font-thin rounded-[20%] bg-gradient-to-b from-blue-400 from-50% to-purple-400'>
+            <div className='p-[1.4rem] font-thin rounded-[20%] bg-gradient-to-b from-blue-400 from-50% to-purple-400'>
               <FaWind className='ms-[0rem]' />
               <p> Wind </p> 
               <p> {weatherData?.wind?.speed} km/h</p>
@@ -185,7 +226,7 @@ const Weather: React.FC = () => {
           </div>
 
           <div className='
-                  p-2 pt-6 pb-6 text-center items-center align-middle mt-2 mb-3
+                  p-2 pt-6 pb-6 text-center items-center align-middle mt-2 mb-2
                   font-poppins flex flex-row justify-between drop-shadow-md
                   bg-zinc-700 bg-opacity-30 rounded-3xl'>
             
@@ -210,18 +251,18 @@ const Weather: React.FC = () => {
             <div className='p-1'>
               <p className='font-thin text-sm'>Tomorrow</p>
               <img src={CloudyIcon} className="scale-75 ms-1" width={55} alt={"Cloudy Weather"} />
-              <p>{('' + forecastData?.list[8]?.main?.temp).substring(0,2)}°</p>
+              <p>{('' + forecastData?.list[6]?.main?.temp).substring(0,2)}°</p>
             </div>
 
             <div className='p-1'>              
               <p className='font-thin text-sm'>{days[timeData?.day+2]}</p>
               <img src={CloudyIcon} className="scale-75" width={55} alt={"Cloudy Weather"} />
-              <p>{('' + forecastData?.list[17]?.main?.temp).substring(0,2)}°</p>
+              <p>{('' + forecastData?.list[13]?.main?.temp).substring(0,2)}°</p>
             </div>
             
 
           </div>
-            <footer className='mt-5 rounded-lg shadow dark:bg-zinc-800 p-1 pt-3 pb-3 align-middle flex flex-row justify-between'>
+            <footer className=' rounded-lg shadow dark:bg-zinc-800 p-1 align-middle flex flex-row justify-between'>
               
               <button onClick={() => setSettingsOpen(true)}>
                 <div className='m-1 flex flex-row gap-[0.4rem] hover:text-yellow-100'>
@@ -235,9 +276,25 @@ const Weather: React.FC = () => {
                   
                   <div className='flex flex-row justify-between mt-5 bg-gradient-to-r from-teal-900 from-40% to-cyan-700 scale-[123%] rounded-md p-2'>
                     <div className='font-poppins font-thin text-xs'>
-                      <h3>LOCATION NAME</h3>
-                      <p>DEGREES</p>
-                      <p>WEATHER DESCRIPTION</p>
+                      <div className='flex flex-row gap-1 mb-1'>
+                        <VscCompass className='text-xl'/>
+                        <h3 className='mt-[0.1rem]'>{weatherData?.name}</h3>
+                      </div>
+                      <div className='flex flex-row gap-1 mb-1'>
+                        <BsThermometer className='text-xl'/>
+                        <p className='mt-[0.1rem]'>{(''+weatherData?.main?.temp).substring(0,2)}°C</p>
+                      </div>
+                      <div className='flex flex-row gap-1 mb-1'>
+                        <TiWeatherCloudy className='text-xl'/>
+                        <p className='mt-[0.1rem]'>{weatherData?.weather[0]?.main}</p>
+                      </div>
+                      <div className='flex flex-row gap-1 mb-1'>
+                        <IoMdInformationCircleOutline className='text-xl'/>
+                        <p className='mt-[0.1rem]'>{weatherData?.weather[0]?.description}</p>
+                      </div>
+                      
+                      
+                      
                     </div>
                     <img src={DefaultLocation} className="scale-100 rounded-md drop-shadow-md" width={85} alt={"Cloudy Weather"} />
                   </div>
@@ -245,8 +302,9 @@ const Weather: React.FC = () => {
 
                   <div className='mt-7 font-poppins font-thin text-sm'>
                     <p>Change location</p>
-                    <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Enter City Name" />
-
+                    <form onSubmit={handleSubmit}>
+                      <input name="location" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="Location" type="text" placeholder="Enter City Name" />
+                    </form>
                     <div className='mt-3'>
                       <p>Degrees unit</p>
                       <div className="flex items-center">
