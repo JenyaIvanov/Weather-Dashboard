@@ -1,12 +1,12 @@
 // Imports
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState, useEffect, useReducer, ReactNode } from 'react';
 import axios from 'axios';
 import Modal from './Modal';
 
 // Icon Imports
 import { FaWind, FaGear  } from "react-icons/fa6";
 import { MdOutlineWaterDrop } from "react-icons/md";
-import { IoThermometerOutline } from "react-icons/io5";
+import { IoThermometerOutline, IoPeopleCircleSharp } from "react-icons/io5";
 import { BsThermometer, BsThermometerHigh } from "react-icons/bs";
 import CloudyIcon from './icon/CloudyIcon.png';
 import DefaultLocation from './location/DefaultLocation.jpeg';
@@ -22,6 +22,8 @@ const Weather: React.FC = () => {
   const [forecastData, setForecastData] = useState<any>(null);
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
   const [weatherLocation, setWeatherLocation] = useState<string>("Tokyo");
+  const [countryFlag, setCountryFlag] = useState<string>("https://flagsapi.com/JP/flat/64.png");
+  const [populationCount, setPopulationCount] = useState<string>("0");
 
   // Timezones
   var cityTimezones = require('city-timezones');
@@ -52,6 +54,24 @@ const Weather: React.FC = () => {
     "Saturday"
   ];
 
+    // Country Flag Generator
+    function fetchCountryFlag(code:string) {
+
+      
+      if(code === undefined) // Default Flag If None Is Found
+        code = "AQ"
+
+      // Time Data
+      const flags_api_url = 'https://flagsapi.com/';
+      const flags_settings = '/flat/64.png';
+
+      const flag_image = flags_api_url+code+flags_settings;
+
+      setCountryFlag(flag_image);
+
+    };
+
+
   function handleSubmit(e:any) {
     // Prevent the browser from reloading the page
     e.preventDefault();
@@ -64,6 +84,49 @@ const Weather: React.FC = () => {
     //console.log('Location Changed To: '+ location);
     setWeatherLocation(location);
     
+  }
+
+  function populationShortner() {
+    const number = parseInt(populationCount);
+    //console.log('[DEBUG] Num: '+ number + '. PC: ' + populationCount);
+
+    // No data passed from num
+    if(number == null)
+      return "ERR1";
+
+    if(number > 10000000000){
+      return String(number).substring(0,2) + '.' + String(number).substring(2,3) + 'B';
+    }
+    
+    if(number > 1000000000){
+        return String(number).substring(0,1) + '.' + String(number).substring(1,3) + 'B';
+    }
+
+    if(number > 10000000){
+      return String(number).substring(0,2) + '.' + String(number).substring(2,3) + 'M';
+    }
+  
+    if(number > 1000000){
+        return String(number).substring(0,1) + '.' + String(number).substring(1,3) + 'M';
+    }
+
+    if(number > 100000){
+      return String(number).substring(0,3) + '.' + String(number).substring(2,3) + 'K';
+    }
+
+    if(number > 10000){
+      return String(number).substring(0,2) + '.' + String(number).substring(2,3) + 'K';
+    }
+  
+    if(number > 1000){
+        return String(number).substring(0,1) + '.' + String(number).substring(1,3) + 'K';
+    }
+
+    if(number <= 1000){
+      return String(number);
+    }
+
+    return "ERR2";
   }
 
 
@@ -80,7 +143,7 @@ const Weather: React.FC = () => {
         const weather_response = await axios.get(backend_url, {params: {city: weatherLocation}});
         setWeatherData(weather_response.data);
   
-        //console.log(weather_response.data)
+        console.log(weather_response.data)
   
       } catch (error) {
         console.error('Error fetching weather data:', error);
@@ -94,10 +157,12 @@ const Weather: React.FC = () => {
             // Weather Data
             const backend_url = 'http://localhost:5000/forecast/';
             const forecast_response = await axios.get(backend_url,{params: {city: weatherLocation}});
-            setForecastData(forecast_response.data);
-    
             //console.log(forecast_response.data)
-  
+
+            setForecastData(forecast_response.data);
+            
+            setPopulationCount(forecast_response.data.city.population)
+
           } catch (error) {
             console.error('Error fetching weather data:', error);
           }
@@ -114,14 +179,15 @@ const Weather: React.FC = () => {
         
         // Get Timezone for a city
         const getTimeZone = cityTimezones.lookupViaCity(weatherLocation);
-        console.log(getTimeZone);
+        fetchCountryFlag(getTimeZone[0]?.iso2);
+        //console.log(getTimeZone);
 
         if(weatherLocation == "London"){ // Special condition for multiple cities with same name.
           timezone = (getTimeZone[1].timezone).split('/')[0];
         } else {
           timezone = (getTimeZone[0].timezone).split('/')[0];
         }
-        console.log('[DEBUG] Location: ' + weatherLocation + '. Timezone: ' + timezone);
+        //console.log('[DEBUG] Location: ' + weatherLocation + '. Timezone: ' + timezone);
   
         const time_response = await axios.get(timezone_api_url+timezone+'/'+weatherLocation);
         setTimeData(time_response.data);
@@ -138,7 +204,7 @@ const Weather: React.FC = () => {
     fetchWeatherData();
     fetchTimeData();
   }
-  , [weatherLocation]);
+  , [countryFlag,weatherLocation]);
 
   
 
@@ -275,35 +341,42 @@ const Weather: React.FC = () => {
                 <Modal settingsOpen={settingsOpen} onClose={() => setSettingsOpen(false)}>
                   
                   <div className='flex flex-row justify-between mt-5 bg-gradient-to-r from-teal-900 from-40% to-cyan-700 scale-[123%] rounded-md p-2'>
-                    <div className='font-poppins font-thin text-xs'>
-                      <div className='flex flex-row gap-1 mb-1'>
+                    <div className='font-poppins font-thin text-xs mt-2'>
+                      <div className='flex flex-row gap-2 mb-2'>
                         <VscCompass className='text-xl'/>
                         <h3 className='mt-[0.1rem]'>{weatherData?.name}</h3>
                       </div>
-                      <div className='flex flex-row gap-1 mb-1'>
+                      <div className='flex flex-row gap-2 mb-2'>
                         <BsThermometer className='text-xl'/>
                         <p className='mt-[0.1rem]'>{(''+weatherData?.main?.temp).substring(0,2)}°C</p>
                       </div>
-                      <div className='flex flex-row gap-1 mb-1'>
+                      <div className='flex flex-row gap-2 mb-2'>
                         <TiWeatherCloudy className='text-xl'/>
                         <p className='mt-[0.1rem]'>{weatherData?.weather[0]?.main}</p>
                       </div>
-                      <div className='flex flex-row gap-1 mb-1'>
+                      <div className='flex flex-row gap-2 '>
                         <IoMdInformationCircleOutline className='text-xl'/>
                         <p className='mt-[0.1rem]'>{weatherData?.weather[0]?.description}</p>
                       </div>
-                      
-                      
-                      
                     </div>
-                    <img src={DefaultLocation} className="scale-100 rounded-md drop-shadow-md" width={85} alt={"Cloudy Weather"} />
+                    <img src={DefaultLocation} className="scale-100 object-cover rounded-xl drop-shadow-md" width={115} alt={"Location Image"} />
+                  </div>
+                  
+                  <div className='flex text-sm font-thin flex-row justify-between mx-[-1.9rem] scale-100 mt-5 align-middle items-center'>
+                    <div className='flex flex-row bg-cyan-500 rounded-md p-2'>
+                      <IoPeopleCircleSharp className='text-xl me-1'/>
+                      <p>Population: {populationShortner()}</p>
+                    </div>
+                    <div className='flex flex-row bg-cyan-500 rounded-md p-2 '>
+                      <img src={countryFlag} className="scale-100 object-contain drop-shadow-md" width={64/3} alt={"Country Flag"} />
+                    </div>
                   </div>
 
 
-                  <div className='mt-7 font-poppins font-thin text-sm'>
+                  <div className='mt-9 font-poppins font-thin text-sm'>
                     <p>Change location</p>
                     <form onSubmit={handleSubmit}>
-                      <input name="location" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="Location" type="text" placeholder="Enter City Name" />
+                      <input name="location" className="shadow mt-1 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="Location" type="text" placeholder="Enter City Name" />
                     </form>
                     <div className='mt-3'>
                       <p>Degrees unit</p>
