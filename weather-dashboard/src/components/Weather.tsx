@@ -143,7 +143,7 @@ const Weather: React.FC = () => {
         const weather_response = await axios.get(backend_url, {params: {city: weatherLocation}});
         setWeatherData(weather_response.data);
   
-        console.log(weather_response.data)
+        //console.log(weather_response.data)
   
       } catch (error) {
         console.error('Error fetching weather data:', error);
@@ -179,13 +179,15 @@ const Weather: React.FC = () => {
         
         // Get Timezone for a city
         const getTimeZone = cityTimezones.lookupViaCity(weatherLocation);
-        fetchCountryFlag(getTimeZone[0]?.iso2);
+        
         //console.log(getTimeZone);
 
         if(weatherLocation == "London"){ // Special condition for multiple cities with same name.
           timezone = (getTimeZone[1].timezone).split('/')[0];
+          fetchCountryFlag(getTimeZone[1]?.iso2);
         } else {
           timezone = (getTimeZone[0].timezone).split('/')[0];
+          fetchCountryFlag(getTimeZone[0]?.iso2);
         }
         //console.log('[DEBUG] Location: ' + weatherLocation + '. Timezone: ' + timezone);
   
@@ -317,13 +319,13 @@ const Weather: React.FC = () => {
             <div className='p-1'>
               <p className='font-thin text-sm'>Tomorrow</p>
               <img src={CloudyIcon} className="scale-75 ms-1" width={55} alt={"Cloudy Weather"} />
-              <p>{('' + forecastData?.list[6]?.main?.temp).substring(0,2)}°</p>
+              <p>{('' + forecastData?.list[7]?.main?.temp).substring(0,2)}°</p>
             </div>
 
             <div className='p-1'>              
               <p className='font-thin text-sm'>{days[timeData?.day+2]}</p>
               <img src={CloudyIcon} className="scale-75" width={55} alt={"Cloudy Weather"} />
-              <p>{('' + forecastData?.list[13]?.main?.temp).substring(0,2)}°</p>
+              <p>{('' + forecastData?.list[14]?.main?.temp).substring(0,2)}°</p>
             </div>
             
 
