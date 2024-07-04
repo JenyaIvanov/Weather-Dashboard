@@ -11,7 +11,7 @@ import { BsThermometer, BsThermometerHigh } from "react-icons/bs";
 import CloudyIcon from './icon/CloudyIcon.png';
 import DefaultLocation from './location/DefaultLocation.jpeg';
 import { FaGithub } from "react-icons/fa";
-import { VscCompass } from "react-icons/vsc";
+import { GiBlackFlag } from "react-icons/gi";
 import { TiWeatherCloudy } from "react-icons/ti";
 import { IoMdInformationCircleOutline } from "react-icons/io";
 
@@ -341,37 +341,46 @@ const Weather: React.FC = () => {
 
               <div className={settingsOpen ? "visible" : "invisible"}>
                 <Modal settingsOpen={settingsOpen} onClose={() => setSettingsOpen(false)}>
-                  
-                  <div className='flex flex-row justify-between mt-5 bg-gradient-to-r from-teal-900 from-40% to-cyan-700 scale-[123%] rounded-md p-2'>
-                    <div className='font-poppins font-thin text-xs mt-2'>
-                      <div className='flex flex-row gap-2 mb-2'>
-                        <VscCompass className='text-xl'/>
-                        <h3 className='mt-[0.1rem]'>{weatherData?.name}</h3>
+                    <div 
+                      style={{backgroundImage: 'url('+DefaultLocation+')'}}
+                      className={"mt-[2rem] scale-[115%] h-[20rem] rounded-[5%] p-1 align-middle items-center text-center bg-cover relative"}
+                    >
+                      <div className='flex flex-col mt-[6.5rem]'>
+                        <h3 className='drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.5)] font-bold text-4xl'>{weatherData?.name}</h3>
                       </div>
-                      <div className='flex flex-row gap-2 mb-2'>
-                        <BsThermometer className='text-xl'/>
-                        <p className='mt-[0.1rem]'>{(''+weatherData?.main?.temp).substring(0,2)}°C</p>
+
+                      <div className='absolute bottom-0 ms-3 mb-2 h-40 w-60 rounded-xl p-2 bg-gradient-to-r from-cyan-400 from-50% to-purple-300'>
+                          
+                            <div className='font-poppins font-thin text-xs mt-2'>
+                              
+                              <div className='flex flex-row gap-2 mb-2'>
+                                <BsThermometer className='text-xl'/>
+                                <p className='mt-[0.1rem]'>{(''+weatherData?.main?.temp).substring(0,2)}°C</p>
+                              </div>
+                             
+                              <div className='flex flex-row gap-2 mb-2'>
+                                <TiWeatherCloudy className='text-xl'/>
+                                <p className='mt-[0.1rem]'>{weatherData?.weather[0]?.main}</p>
+                              </div>
+                              
+                              <div className='flex flex-row gap-2 mb-2'>
+                                <IoMdInformationCircleOutline className='text-xl'/>
+                                <p className='mt-[0.1rem]'>{weatherData?.weather[0]?.description}</p>
+                              </div>
+
+                              <div className='flex flex-row gap-2 mb-2'>
+                                <GiBlackFlag className='text-xl'/>
+                                <img src={countryFlag} className=" scale-100 object-contain drop-shadow-md" width={64/3} alt={"Country Flag"} />
+                              </div>
+
+                              <div className='flex flex-row mb-1'>
+                               <IoPeopleCircleSharp className='text-xl me-1'/>
+                               <p>Population: {populationShortner()}</p>
+                              </div>
+
+                            </div>
+                        
                       </div>
-                      <div className='flex flex-row gap-2 mb-2'>
-                        <TiWeatherCloudy className='text-xl'/>
-                        <p className='mt-[0.1rem]'>{weatherData?.weather[0]?.main}</p>
-                      </div>
-                      <div className='flex flex-row gap-2 '>
-                        <IoMdInformationCircleOutline className='text-xl'/>
-                        <p className='mt-[0.1rem]'>{weatherData?.weather[0]?.description}</p>
-                      </div>
-                    </div>
-                    <img src={DefaultLocation} className="scale-100 object-cover rounded-xl drop-shadow-md" width={115} alt={"Location Image"} />
-                  </div>
-                  
-                  <div className='flex text-sm font-thin flex-row justify-between mx-[-1.9rem] scale-100 mt-5 align-middle items-center'>
-                    <div className='flex flex-row bg-cyan-500 rounded-md p-2'>
-                      <IoPeopleCircleSharp className='text-xl me-1'/>
-                      <p>Population: {populationShortner()}</p>
-                    </div>
-                    <div className='flex flex-row bg-cyan-500 rounded-md p-2 '>
-                      <img src={countryFlag} className="scale-100 object-contain drop-shadow-md" width={64/3} alt={"Country Flag"} />
-                    </div>
                   </div>
 
 
