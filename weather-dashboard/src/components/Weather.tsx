@@ -86,6 +86,33 @@ const Weather: React.FC = () => {
     
   }
 
+  // Returns the day NUMBER after tomorrow.
+  // EX: Sunday (0) -> Tuesday (2)
+  function dayAfterTomorrow(dayName:string){
+    if (dayName == "Sunday")
+      return 2;
+    
+    if (dayName == "Monday")
+      return 3;
+
+    if (dayName == "Tuesday")
+      return 4;
+
+    if (dayName == "Wednesday")
+      return 5;
+    
+    if (dayName == "Thursday")
+      return 6;
+
+    if (dayName == "Friday")
+      return 0;
+
+    if (dayName == "Saturday")
+      return 1;
+
+    return 0;
+  }
+
   function populationShortner() {
     const number = parseInt(populationCount);
     //console.log('[DEBUG] Num: '+ number + '. PC: ' + populationCount);
@@ -213,13 +240,14 @@ const Weather: React.FC = () => {
   //  Variables Manipulation
   let AM_PM = "Day"; // Default value
   let background_image = "./img/background/ClearDay.jpeg"; // Default value
+  const date = new Date();
 
 
-  if(timeData?.hour > 19 || timeData?.hour >= 0 && timeData?.hour < 6){
+  if(timeData?.hour >= 19 || timeData?.hour >= 0 && timeData?.hour < 6){
     AM_PM = "Night";
   }
     
-  if(timeData?.hour > 5 && timeData?.hour < 20){
+  if(timeData?.hour > 5 && timeData?.hour < 19){
     AM_PM = "Day";
   }
 
@@ -231,7 +259,7 @@ const Weather: React.FC = () => {
 
     
     
-    <div>
+    <div className='overflow-hidden'>
       {weatherData && (
         <div className='mt-1'>
 
@@ -294,37 +322,37 @@ const Weather: React.FC = () => {
           </div>
 
           <div className='
-                  p-2 pt-6 pb-6 text-center items-center align-middle mt-2 mb-2
+                  p-2 pt-5 pb-5 text-center items-center align-middle mt-2 mb-2
                   font-poppins flex flex-row justify-between drop-shadow-md
                   bg-zinc-700 bg-opacity-30 rounded-3xl'>
             
-          <div className='p-1'>              
+            <div className='p-1 flex flex-col text-center items-center'>              
               <p className='font-thin text-sm'>NOW</p>
-              <img src={CloudyIcon} className="scale-75" width={55} alt={"Cloudy Weather"} />
+              <TiWeatherCloudy className='text-5xl'/>
               <p>{(''+weatherData?.main?.temp).substring(0,2)}°</p>
             </div>
 
-            <div className='p-1'>              
+            <div className='p-1 flex flex-col text-center items-center'>              
               <p className='font-thin text-sm'>{forecastData?.list[1]?.dt_txt?.substring(10,16)}</p>
-              <img src={CloudyIcon} className="scale-75" width={55} alt={"Cloudy Weather"} />
+              <TiWeatherCloudy className='text-5xl'/>
               <p>{('' + forecastData?.list[1]?.main?.temp).substring(0,2)}°</p>
             </div>
 
-            <div className='p-1'>              
+            <div className='p-1 flex flex-col text-center items-center'>             
               <p className='font-thin text-sm'>{forecastData?.list[2]?.dt_txt?.substring(10,16)}</p>
-              <img src={CloudyIcon} className="scale-75" width={55} alt={"Cloudy Weather"} />
+              <TiWeatherCloudy className='text-5xl'/>
               <p>{('' + forecastData?.list[2]?.main?.temp).substring(0,2)}°</p>
             </div>
 
-            <div className='p-1'>
+            <div className='p-1 flex flex-col text-center items-center'>
               <p className='font-thin text-sm'>Tomorrow</p>
-              <img src={CloudyIcon} className="scale-75 ms-1" width={55} alt={"Cloudy Weather"} />
+              <TiWeatherCloudy className='text-5xl'/>
               <p>{('' + forecastData?.list[7]?.main?.temp).substring(0,2)}°</p>
             </div>
 
-            <div className='p-1'>              
-              <p className='font-thin text-sm'>{days[timeData?.day+2]}</p>
-              <img src={CloudyIcon} className="scale-75" width={55} alt={"Cloudy Weather"} />
+            <div className='p-1 flex flex-col text-center items-center'>              
+              <p className='font-thin text-sm'>{days[dayAfterTomorrow(timeData?.dayOfWeek)]}</p>
+              <TiWeatherCloudy className='text-5xl'/>
               <p>{('' + forecastData?.list[14]?.main?.temp).substring(0,2)}°</p>
             </div>
             
@@ -375,7 +403,7 @@ const Weather: React.FC = () => {
 
                               <div className='flex flex-row mb-1'>
                                <IoPeopleCircleSharp className='text-xl me-1'/>
-                               <p>Population: {populationShortner()}</p>
+                               <p className='mt-[0.1rem]'>Population: {populationShortner()}</p>
                               </div>
 
                             </div>
