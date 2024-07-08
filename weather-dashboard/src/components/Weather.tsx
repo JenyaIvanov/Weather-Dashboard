@@ -8,11 +8,10 @@ import { FaWind, FaGear  } from "react-icons/fa6";
 import { MdOutlineWaterDrop } from "react-icons/md";
 import { IoThermometerOutline, IoPeopleCircleSharp } from "react-icons/io5";
 import { BsThermometer, BsThermometerHigh } from "react-icons/bs";
-import CloudyIcon from './icon/CloudyIcon.png';
 import DefaultLocation from './location/DefaultLocation.jpeg';
 import { FaGithub } from "react-icons/fa";
 import { GiBlackFlag } from "react-icons/gi";
-import { TiWeatherCloudy } from "react-icons/ti";
+import { TiWeatherCloudy, TiWeatherPartlySunny, TiWeatherShower, TiWeatherWindy, TiWeatherStormy, TiWeatherDownpour, TiWeatherNight, TiWeatherSunny, TiWeatherSnow, } from "react-icons/ti";
 import { IoMdInformationCircleOutline } from "react-icons/io";
 
 // Weather App
@@ -63,7 +62,7 @@ const Weather: React.FC = () => {
 
       // Time Data
       const flags_api_url = 'https://flagsapi.com/';
-      const flags_settings = '/flat/64.png';
+      const flags_settings = '/shiny/64.png';
 
       const flag_image = flags_api_url+code+flags_settings;
 
@@ -310,7 +309,7 @@ const Weather: React.FC = () => {
             <div className='p-[1.4rem] px-[1.7rem] font-thin rounded-[20%] bg-gradient-to-tr from-blue-400 from-50% to-purple-400'>
               <IoThermometerOutline className='ms-[-0.2rem]' />
               <p> Pressure </p> 
-              <p> {weatherData?.main?.pressure} MB</p>
+              <p> {weatherData?.main?.pressure} hPa</p>
             </div>
 
             <div className='p-[1.4rem] font-thin rounded-[20%] bg-gradient-to-b from-blue-400 from-50% to-purple-400'>
@@ -328,31 +327,114 @@ const Weather: React.FC = () => {
             
             <div className='p-1 flex flex-col text-center items-center'>              
               <p className='font-thin text-sm'>NOW</p>
-              <TiWeatherCloudy className='text-5xl'/>
+              
+              <div className='m-[0.3rem]'>
+                {weatherData?.weather[0]?.main === "Clear" && AM_PM === "Day" ? <TiWeatherSunny className='text-5xl' /> : ""}
+                {weatherData?.weather[0]?.main === "Clear" && AM_PM === "Night" ? <TiWeatherNight className='text-5xl' /> : ""}
+
+                {weatherData?.weather[0]?.main === "Clouds" && AM_PM === "Day" ? <TiWeatherPartlySunny className='text-5xl' /> : ""}
+                {weatherData?.weather[0]?.main === "Clouds" && AM_PM === "Night" ? <TiWeatherCloudy className='text-5xl' /> : ""}
+
+                {weatherData?.weather[0]?.main === "Rain" ? <TiWeatherDownpour className='text-5xl' /> : ""}
+
+                {weatherData?.weather[0]?.main === "Drizzle" ? <TiWeatherShower className='text-5xl' /> : ""}
+
+                {weatherData?.weather[0]?.main === "Thunderstorm" ? <TiWeatherStormy className='text-5xl' /> : ""}
+
+                {weatherData?.weather[0]?.id >= 700 &&  weatherData?.weather[0]?.id <= 799? <TiWeatherWindy className='text-5xl' /> : ""}
+
+                {weatherData?.weather[0]?.main === "Snow" ? <TiWeatherSnow className='text-5xl' /> : ""}
+
+              </div>
+
               <p>{(''+weatherData?.main?.temp).substring(0,2)}°</p>
             </div>
 
             <div className='p-1 flex flex-col text-center items-center'>              
               <p className='font-thin text-sm'>{forecastData?.list[1]?.dt_txt?.substring(10,16)}</p>
-              <TiWeatherCloudy className='text-5xl'/>
+              <div className='m-[0.3rem]'>
+                {forecastData?.list[1]?.weather[0]?.main === "Clear" && AM_PM === "Day" ? <TiWeatherSunny className='text-5xl' /> : ""}
+                {forecastData?.list[1]?.weather[0]?.main === "Clear" && AM_PM === "Night" ? <TiWeatherNight className='text-5xl' /> : ""}
+
+                {forecastData?.list[1]?.weather[0]?.main === "Clouds" && AM_PM === "Day" ? <TiWeatherPartlySunny className='text-5xl' /> : ""}
+                {forecastData?.list[1]?.weather[0]?.main === "Clouds" && AM_PM === "Night" ? <TiWeatherCloudy className='text-5xl' /> : ""}
+
+                {forecastData?.list[1]?.weather[0]?.main === "Rain" ? <TiWeatherDownpour className='text-5xl' /> : ""}
+
+                {forecastData?.list[1]?.weather[0]?.main === "Drizzle" ? <TiWeatherShower className='text-5xl' /> : ""}
+
+                {forecastData?.list[1]?.weather[0]?.main === "Thunderstorm" ? <TiWeatherStormy className='text-5xl' /> : ""}
+
+                {forecastData?.list[1]?.weather[0]?.id >= 700 &&  weatherData?.weather[0]?.id <= 799? <TiWeatherWindy className='text-5xl' /> : ""}
+
+                {forecastData?.list[1]?.weather[0]?.main === "Snow" ? <TiWeatherSnow className='text-5xl' /> : ""}
+
+              </div>
               <p>{('' + forecastData?.list[1]?.main?.temp).substring(0,2)}°</p>
             </div>
 
             <div className='p-1 flex flex-col text-center items-center'>             
               <p className='font-thin text-sm'>{forecastData?.list[2]?.dt_txt?.substring(10,16)}</p>
-              <TiWeatherCloudy className='text-5xl'/>
+              <div className='m-[0.3rem]'>
+                {forecastData?.list[2]?.weather[0]?.main === "Clear" && AM_PM === "Day" ? <TiWeatherSunny className='text-5xl' /> : ""}
+                {forecastData?.list[2]?.weather[0]?.main === "Clear" && AM_PM === "Night" ? <TiWeatherNight className='text-5xl' /> : ""}
+
+                {forecastData?.list[2]?.weather[0]?.main === "Clouds" && AM_PM === "Day" ? <TiWeatherPartlySunny className='text-5xl' /> : ""}
+                {forecastData?.list[2]?.weather[0]?.main === "Clouds" && AM_PM === "Night" ? <TiWeatherCloudy className='text-5xl' /> : ""}
+
+                {forecastData?.list[2]?.weather[0]?.main === "Rain" ? <TiWeatherDownpour className='text-5xl' /> : ""}
+
+                {forecastData?.list[2]?.weather[0]?.main === "Drizzle" ? <TiWeatherShower className='text-5xl' /> : ""}
+
+                {forecastData?.list[2]?.weather[0]?.main === "Thunderstorm" ? <TiWeatherStormy className='text-5xl' /> : ""}
+
+                {forecastData?.list[2]?.weather[0]?.id >= 700 &&  weatherData?.weather[0]?.id <= 799? <TiWeatherWindy className='text-5xl' /> : ""}
+
+                {forecastData?.list[2]?.weather[0]?.main === "Snow" ? <TiWeatherSnow className='text-5xl' /> : ""}
+
+              </div>
               <p>{('' + forecastData?.list[2]?.main?.temp).substring(0,2)}°</p>
             </div>
 
             <div className='p-1 flex flex-col text-center items-center'>
               <p className='font-thin text-sm'>Tomorrow</p>
-              <TiWeatherCloudy className='text-5xl'/>
+              <div className='m-[0.3rem]'>
+                {forecastData?.list[7]?.weather[0]?.main === "Clear" ? <TiWeatherSunny className='text-5xl' /> : ""}
+
+                {forecastData?.list[7]?.weather[0]?.main === "Clouds" ? <TiWeatherPartlySunny className='text-5xl' /> : ""}
+                
+                {forecastData?.list[7]?.weather[0]?.main === "Rain" ? <TiWeatherDownpour className='text-5xl' /> : ""}
+
+                {forecastData?.list[7]?.weather[0]?.main === "Drizzle" ? <TiWeatherShower className='text-5xl' /> : ""}
+
+                {forecastData?.list[7]?.weather[0]?.main === "Thunderstorm" ? <TiWeatherStormy className='text-5xl' /> : ""}
+
+                {forecastData?.list[7]?.weather[0]?.id >= 700 &&  weatherData?.weather[0]?.id <= 799? <TiWeatherWindy className='text-5xl' /> : ""}
+
+                {forecastData?.list[7]?.weather[0]?.main === "Snow" ? <TiWeatherSnow className='text-5xl' /> : ""}
+
+              </div>
               <p>{('' + forecastData?.list[7]?.main?.temp).substring(0,2)}°</p>
             </div>
 
             <div className='p-1 flex flex-col text-center items-center'>              
               <p className='font-thin text-sm'>{days[dayAfterTomorrow(timeData?.dayOfWeek)]}</p>
-              <TiWeatherCloudy className='text-5xl'/>
+              <div className='m-[0.3rem]'>
+                {forecastData?.list[14]?.weather[0]?.main === "Clear" ? <TiWeatherSunny className='text-5xl' /> : ""}
+
+                {forecastData?.list[14]?.weather[0]?.main === "Clouds" ? <TiWeatherPartlySunny className='text-5xl' /> : ""}
+                
+                {forecastData?.list[14]?.weather[0]?.main === "Rain" ? <TiWeatherDownpour className='text-5xl' /> : ""}
+
+                {forecastData?.list[14]?.weather[0]?.main === "Drizzle" ? <TiWeatherShower className='text-5xl' /> : ""}
+
+                {forecastData?.list[14]?.weather[0]?.main === "Thunderstorm" ? <TiWeatherStormy className='text-5xl' /> : ""}
+
+                {forecastData?.list[14]?.weather[0]?.id >= 700 &&  weatherData?.weather[0]?.id <= 799? <TiWeatherWindy className='text-5xl' /> : ""}
+
+                {forecastData?.list[14]?.weather[0]?.main === "Snow" ? <TiWeatherSnow className='text-5xl' /> : ""}
+
+              </div>
               <p>{('' + forecastData?.list[14]?.main?.temp).substring(0,2)}°</p>
             </div>
             
@@ -398,7 +480,7 @@ const Weather: React.FC = () => {
 
                               <div className='flex flex-row gap-2 mb-2'>
                                 <GiBlackFlag className='text-xl'/>
-                                <img src={countryFlag} className=" scale-100 object-contain drop-shadow-md" width={64/3} alt={"Country Flag"} />
+                                <img src={countryFlag} className=" scale-[110%]  object-contain drop-shadow-md" width={64/3} alt={"Country Flag"} />
                               </div>
 
                               <div className='flex flex-row mb-1'>
