@@ -13,8 +13,9 @@ const PORT = process.env.PORT || 5000;
 //-- Weather
 app.get('/weather', async (req: Request, res: Response) => {
   const API_KEY = process.env.REACT_APP_API_KEY; // Replace with your actual weather API key
-  const city = req.query.city || 'London'; // Default city is London
-  const API_URL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`; // Change to your API URL.
+  const city = req.query.city || 'Tokyo'; // Default city is London
+  const units = req.query.units || 'metric'; // Default units are metric
+  const API_URL = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=${units}`; // Change to your API URL.
 
   try {
     const response = await axios.get(API_URL);
@@ -29,7 +30,8 @@ app.get('/weather', async (req: Request, res: Response) => {
 app.get('/forecast', async (req: Request, res: Response) => {
   const API_KEY = process.env.REACT_APP_API_KEY; // Replace with your actual weather API key
   const city = req.query.city || 'London'; // Default city is London
-  const API_URL = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric`; // Change to your API URL.
+  const units = req.query.units || 'metric'; // Default units are metric
+  const API_URL = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=${units}`; // Change to your API URL.
 
   try {
     const response = await axios.get(API_URL);

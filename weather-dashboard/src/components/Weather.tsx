@@ -20,6 +20,7 @@ const Weather: React.FC = () => {
   const [timeData, setTimeData] = useState<any>(null);
   const [forecastData, setForecastData] = useState<any>(null);
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
+  const [useCelsius, setUseCelsius] = useState<boolean>(true);
   const [weatherLocation, setWeatherLocation] = useState<string>("Tokyo");
   const [countryFlag, setCountryFlag] = useState<string>("https://flagsapi.com/JP/flat/64.png");
   const [populationCount, setPopulationCount] = useState<string>("0");
@@ -165,8 +166,18 @@ const Weather: React.FC = () => {
   
         // Weather Data
         const backend_url = 'http://localhost:5000/weather/'
+
+        let selectedUnits = 'metric'; // Default value.
+
+        if(useCelsius == true)
+          selectedUnits = 'metric';
+        else
+          selectedUnits = 'imperial';
   
-        const weather_response = await axios.get(backend_url, {params: {city: weatherLocation}});
+        //console.log('[DEBUG] location: ' + weatherLocation + '. units: ' + selectedUnits);
+
+        const weather_response = await axios.get(backend_url, 
+          {params: {city: weatherLocation, units: selectedUnits}});
         setWeatherData(weather_response.data);
   
         //console.log(weather_response.data)
@@ -182,7 +193,15 @@ const Weather: React.FC = () => {
     
             // Weather Data
             const backend_url = 'http://localhost:5000/forecast/';
-            const forecast_response = await axios.get(backend_url,{params: {city: weatherLocation}});
+
+            let selectedUnits = 'metric'; // Default value.
+
+            if(useCelsius == true)
+              selectedUnits = 'metric';
+            else
+              selectedUnits = 'imperial';
+
+            const forecast_response = await axios.get(backend_url,{params: {city: weatherLocation, units: selectedUnits}});
             //console.log(forecast_response.data)
 
             setForecastData(forecast_response.data);
@@ -232,7 +251,7 @@ const Weather: React.FC = () => {
     fetchWeatherData();
     fetchTimeData();
   }
-  , [countryFlag,weatherLocation]);
+  , [countryFlag, weatherLocation, useCelsius]);
 
   
 
@@ -279,19 +298,19 @@ const Weather: React.FC = () => {
 
             <div className='ms-[4.5rem] mt-[6.5rem] scale-[115%] flex-row text-center font-poppins'>
                 <p className='font-normal text-normal mb-[-1.3rem] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.5)]'> {weatherData?.name}</p>
-                <p className='font-bold text-[4rem] m-[-1rem] drop-shadow-lg'> {(''+weatherData?.main?.temp).substring(0,2)}°C  </p>
-                <p className='font-thin text-sm drop-shadow-lg'> Feels Like {Math.floor(weatherData?.main?.feels_like)}°C </p>
+                <p className='font-bold text-[4rem] m-[-1rem] drop-shadow-lg'> {(''+weatherData?.main?.temp).substring(0,2)}°{useCelsius ? "C" : "F"}  </p>
+                <p className='font-thin text-sm drop-shadow-lg'> Feels Like {Math.floor(weatherData?.main?.feels_like)}°{useCelsius ? "C" : "F"} </p>
                 <p className='font-normal text-[1.3rem] m-[-0.4rem] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]'> {weatherData?.weather[0]?.main}</p>
             </div>
 
             <div className='m-4 p-1 flex flex-row justify-between text-center mt-[10rem] drop-shadow-md text-sm font-poppins font-thin'>
               <div className='flex gap-1'>
                 <BsThermometerHigh className='text-xl'/>
-                <p className='drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]'>Max {(''+weatherData?.main?.temp_max).substring(0,2)}°C</p>
+                <p className='drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]'>Max {(''+weatherData?.main?.temp_max).substring(0,2)}°{useCelsius ? "C" : "F"}</p>
               </div>
               <div className='flex gap-1'>
                   <BsThermometer className='text-xl'/>
-                  <p className='drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]'>Min {(''+weatherData?.main?.temp_min).substring(0,2)}°C</p>
+                  <p className='drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]'>Min {(''+weatherData?.main?.temp_min).substring(0,2)}°{useCelsius ? "C" : "F"}</p>
               </div>
             </div>
           </div>
@@ -465,7 +484,7 @@ const Weather: React.FC = () => {
                               
                               <div className='flex flex-row gap-2 mb-2'>
                                 <BsThermometer className='text-xl'/>
-                                <p className='mt-[0.1rem]'>{(''+weatherData?.main?.temp).substring(0,2)}°C</p>
+                                <p className='mt-[0.1rem]'>{(''+weatherData?.main?.temp).substring(0,2)}°{useCelsius ? "C" : "F"}</p>
                               </div>
                              
                               <div className='flex flex-row gap-2 mb-2'>
@@ -502,11 +521,15 @@ const Weather: React.FC = () => {
                     <div className='mt-3'>
                       <p>Degrees unit</p>
                       <div className="flex items-center">
-                        <input id="default-radio-1" type="radio" value="" name="default-radio" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+
+                        {useCelsius == false ? <input id="default-radio-1" readOnly checked type="radio" onClick={() => setUseCelsius(false)} name="default-radio" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" /> : ""}
+                        {useCelsius == true ? <input id="default-radio-1" readOnly type="radio" onClick={() => setUseCelsius(false)} name="default-radio" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" /> : ""}
+
                         <label  className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Fahrenheit</label>
                       </div>
                       <div className="flex items-center">
-                        <input checked id="default-radio-2" type="radio" value="" name="default-radio" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                        {useCelsius == false ? <input id="default-radio-2" readOnly onClick={() => setUseCelsius(true)} type="radio" name="default-radio" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" /> : ""}
+                        {useCelsius == true ? <input id="default-radio-2" checked readOnly onClick={() => setUseCelsius(true)} type="radio" name="default-radio" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" /> : ""}
                         <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Celsius</label>
                       </div>
                     </div>
