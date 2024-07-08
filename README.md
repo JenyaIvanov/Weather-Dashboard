@@ -1,4 +1,4 @@
-![Screenshot 1](https://i.imgur.com/5cIbave.png)![Screenshot 2](https://i.imgur.com/F7JSiDp.png)
+#### Mobile Preview ![Screenshot 1](https://i.imgur.com/5cIbave.png) Mobile - Settings Menu![Screenshot 2](https://i.imgur.com/F7JSiDp.png)
 
 # Weather Dashboard
 
