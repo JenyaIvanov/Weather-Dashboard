@@ -1,18 +1,17 @@
 // Imports
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState, useEffect, useReducer, ReactNode } from 'react';
 import axios from 'axios';
 import Modal from './Modal';
 
 // Icon Imports
 import { FaWind, FaGear  } from "react-icons/fa6";
 import { MdOutlineWaterDrop } from "react-icons/md";
-import { IoThermometerOutline } from "react-icons/io5";
+import { IoThermometerOutline, IoPeopleCircleSharp } from "react-icons/io5";
 import { BsThermometer, BsThermometerHigh } from "react-icons/bs";
-import CloudyIcon from './icon/CloudyIcon.png';
 import DefaultLocation from './location/DefaultLocation.jpeg';
 import { FaGithub } from "react-icons/fa";
-import { VscCompass } from "react-icons/vsc";
-import { TiWeatherCloudy } from "react-icons/ti";
+import { GiBlackFlag } from "react-icons/gi";
+import { TiWeatherCloudy, TiWeatherPartlySunny, TiWeatherShower, TiWeatherWindy, TiWeatherStormy, TiWeatherDownpour, TiWeatherNight, TiWeatherSunny, TiWeatherSnow, } from "react-icons/ti";
 import { IoMdInformationCircleOutline } from "react-icons/io";
 
 // Weather App
@@ -21,7 +20,10 @@ const Weather: React.FC = () => {
   const [timeData, setTimeData] = useState<any>(null);
   const [forecastData, setForecastData] = useState<any>(null);
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
+  const [useCelsius, setUseCelsius] = useState<boolean>(true);
   const [weatherLocation, setWeatherLocation] = useState<string>("Tokyo");
+  const [countryFlag, setCountryFlag] = useState<string>("https://flagsapi.com/JP/flat/64.png");
+  const [populationCount, setPopulationCount] = useState<string>("0");
 
   // Timezones
   var cityTimezones = require('city-timezones');
@@ -52,6 +54,24 @@ const Weather: React.FC = () => {
     "Saturday"
   ];
 
+    // Country Flag Generator
+    function fetchCountryFlag(code:string) {
+
+      
+      if(code === undefined) // Default Flag If None Is Found
+        code = "AQ"
+
+      // Time Data
+      const flags_api_url = 'https://flagsapi.com/';
+      const flags_settings = '/shiny/64.png';
+
+      const flag_image = flags_api_url+code+flags_settings;
+
+      setCountryFlag(flag_image);
+
+    };
+
+
   function handleSubmit(e:any) {
     // Prevent the browser from reloading the page
     e.preventDefault();
@@ -66,6 +86,76 @@ const Weather: React.FC = () => {
     
   }
 
+  // Returns the day NUMBER after tomorrow.
+  // EX: Sunday (0) -> Tuesday (2)
+  function dayAfterTomorrow(dayName:string){
+    if (dayName == "Sunday")
+      return 2;
+    
+    if (dayName == "Monday")
+      return 3;
+
+    if (dayName == "Tuesday")
+      return 4;
+
+    if (dayName == "Wednesday")
+      return 5;
+    
+    if (dayName == "Thursday")
+      return 6;
+
+    if (dayName == "Friday")
+      return 0;
+
+    if (dayName == "Saturday")
+      return 1;
+
+    return 0;
+  }
+
+  function populationShortner() {
+    const number = parseInt(populationCount);
+    //console.log('[DEBUG] Num: '+ number + '. PC: ' + populationCount);
+
+    // No data passed from num
+    if(number == null)
+      return "ERR1";
+
+    if(number > 10000000000){
+      return String(number).substring(0,2) + '.' + String(number).substring(2,3) + 'B';
+    }
+    
+    if(number > 1000000000){
+        return String(number).substring(0,1) + '.' + String(number).substring(1,3) + 'B';
+    }
+
+    if(number > 10000000){
+      return String(number).substring(0,2) + '.' + String(number).substring(2,3) + 'M';
+    }
+  
+    if(number > 1000000){
+        return String(number).substring(0,1) + '.' + String(number).substring(1,3) + 'M';
+    }
+
+    if(number > 100000){
+      return String(number).substring(0,3) + '.' + String(number).substring(2,3) + 'K';
+    }
+
+    if(number > 10000){
+      return String(number).substring(0,2) + '.' + String(number).substring(2,3) + 'K';
+    }
+  
+    if(number > 1000){
+        return String(number).substring(0,1) + '.' + String(number).substring(1,3) + 'K';
+    }
+
+    if(number <= 1000){
+      return String(number);
+    }
+
+    return "ERR2";
+  }
+
 
 
 
@@ -76,8 +166,18 @@ const Weather: React.FC = () => {
   
         // Weather Data
         const backend_url = 'http://localhost:5000/weather/'
+
+        let selectedUnits = 'metric'; // Default value.
+
+        if(useCelsius == true)
+          selectedUnits = 'metric';
+        else
+          selectedUnits = 'imperial';
   
-        const weather_response = await axios.get(backend_url, {params: {city: weatherLocation}});
+        //console.log('[DEBUG] location: ' + weatherLocation + '. units: ' + selectedUnits);
+
+        const weather_response = await axios.get(backend_url, 
+          {params: {city: weatherLocation, units: selectedUnits}});
         setWeatherData(weather_response.data);
   
         //console.log(weather_response.data)
@@ -93,11 +193,21 @@ const Weather: React.FC = () => {
     
             // Weather Data
             const backend_url = 'http://localhost:5000/forecast/';
-            const forecast_response = await axios.get(backend_url,{params: {city: weatherLocation}});
-            setForecastData(forecast_response.data);
-    
+
+            let selectedUnits = 'metric'; // Default value.
+
+            if(useCelsius == true)
+              selectedUnits = 'metric';
+            else
+              selectedUnits = 'imperial';
+
+            const forecast_response = await axios.get(backend_url,{params: {city: weatherLocation, units: selectedUnits}});
             //console.log(forecast_response.data)
-  
+
+            setForecastData(forecast_response.data);
+            
+            setPopulationCount(forecast_response.data.city.population)
+
           } catch (error) {
             console.error('Error fetching weather data:', error);
           }
@@ -114,14 +224,17 @@ const Weather: React.FC = () => {
         
         // Get Timezone for a city
         const getTimeZone = cityTimezones.lookupViaCity(weatherLocation);
-        console.log(getTimeZone);
+        
+        //console.log(getTimeZone);
 
         if(weatherLocation == "London"){ // Special condition for multiple cities with same name.
           timezone = (getTimeZone[1].timezone).split('/')[0];
+          fetchCountryFlag(getTimeZone[1]?.iso2);
         } else {
           timezone = (getTimeZone[0].timezone).split('/')[0];
+          fetchCountryFlag(getTimeZone[0]?.iso2);
         }
-        console.log('[DEBUG] Location: ' + weatherLocation + '. Timezone: ' + timezone);
+        //console.log('[DEBUG] Location: ' + weatherLocation + '. Timezone: ' + timezone);
   
         const time_response = await axios.get(timezone_api_url+timezone+'/'+weatherLocation);
         setTimeData(time_response.data);
@@ -138,20 +251,21 @@ const Weather: React.FC = () => {
     fetchWeatherData();
     fetchTimeData();
   }
-  , [weatherLocation]);
+  , [countryFlag, weatherLocation, useCelsius]);
 
   
 
   //  Variables Manipulation
   let AM_PM = "Day"; // Default value
   let background_image = "./img/background/ClearDay.jpeg"; // Default value
+  const date = new Date();
 
 
-  if(timeData?.hour > 19 || timeData?.hour >= 0 && timeData?.hour < 6){
+  if(timeData?.hour >= 19 || timeData?.hour >= 0 && timeData?.hour < 6){
     AM_PM = "Night";
   }
     
-  if(timeData?.hour > 5 && timeData?.hour < 20){
+  if(timeData?.hour > 5 && timeData?.hour < 19){
     AM_PM = "Day";
   }
 
@@ -163,7 +277,7 @@ const Weather: React.FC = () => {
 
     
     
-    <div>
+    <div className='overflow-hidden'>
       {weatherData && (
         <div className='mt-1'>
 
@@ -184,19 +298,19 @@ const Weather: React.FC = () => {
 
             <div className='ms-[4.5rem] mt-[6.5rem] scale-[115%] flex-row text-center font-poppins'>
                 <p className='font-normal text-normal mb-[-1.3rem] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.5)]'> {weatherData?.name}</p>
-                <p className='font-bold text-[4rem] m-[-1rem] drop-shadow-lg'> {(''+weatherData?.main?.temp).substring(0,2)}°C  </p>
-                <p className='font-thin text-sm drop-shadow-lg'> Feels Like {Math.floor(weatherData?.main?.feels_like)}°C </p>
+                <p className='font-bold text-[4rem] m-[-1rem] drop-shadow-lg'> {(''+weatherData?.main?.temp).substring(0,2)}°{useCelsius ? "C" : "F"}  </p>
+                <p className='font-thin text-sm drop-shadow-lg'> Feels Like {Math.floor(weatherData?.main?.feels_like)}°{useCelsius ? "C" : "F"} </p>
                 <p className='font-normal text-[1.3rem] m-[-0.4rem] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]'> {weatherData?.weather[0]?.main}</p>
             </div>
 
             <div className='m-4 p-1 flex flex-row justify-between text-center mt-[10rem] drop-shadow-md text-sm font-poppins font-thin'>
               <div className='flex gap-1'>
                 <BsThermometerHigh className='text-xl'/>
-                <p className='drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]'>Max {(''+weatherData?.main?.temp_max).substring(0,2)}°C</p>
+                <p className='drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]'>Max {(''+weatherData?.main?.temp_max).substring(0,2)}°{useCelsius ? "C" : "F"}</p>
               </div>
               <div className='flex gap-1'>
                   <BsThermometer className='text-xl'/>
-                  <p className='drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]'>Min {(''+weatherData?.main?.temp_min).substring(0,2)}°C</p>
+                  <p className='drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]'>Min {(''+weatherData?.main?.temp_min).substring(0,2)}°{useCelsius ? "C" : "F"}</p>
               </div>
             </div>
           </div>
@@ -214,7 +328,7 @@ const Weather: React.FC = () => {
             <div className='p-[1.4rem] px-[1.7rem] font-thin rounded-[20%] bg-gradient-to-tr from-blue-400 from-50% to-purple-400'>
               <IoThermometerOutline className='ms-[-0.2rem]' />
               <p> Pressure </p> 
-              <p> {weatherData?.main?.pressure} MB</p>
+              <p> {weatherData?.main?.pressure} hPa</p>
             </div>
 
             <div className='p-[1.4rem] font-thin rounded-[20%] bg-gradient-to-b from-blue-400 from-50% to-purple-400'>
@@ -226,38 +340,121 @@ const Weather: React.FC = () => {
           </div>
 
           <div className='
-                  p-2 pt-6 pb-6 text-center items-center align-middle mt-2 mb-2
+                  p-2 pt-5 pb-5 text-center items-center align-middle mt-2 mb-2
                   font-poppins flex flex-row justify-between drop-shadow-md
                   bg-zinc-700 bg-opacity-30 rounded-3xl'>
             
-          <div className='p-1'>              
+            <div className='p-1 flex flex-col text-center items-center'>              
               <p className='font-thin text-sm'>NOW</p>
-              <img src={CloudyIcon} className="scale-75" width={55} alt={"Cloudy Weather"} />
+              
+              <div className='m-[0.3rem]'>
+                {weatherData?.weather[0]?.main === "Clear" && AM_PM === "Day" ? <TiWeatherSunny className='text-5xl' /> : ""}
+                {weatherData?.weather[0]?.main === "Clear" && AM_PM === "Night" ? <TiWeatherNight className='text-5xl' /> : ""}
+
+                {weatherData?.weather[0]?.main === "Clouds" && AM_PM === "Day" ? <TiWeatherPartlySunny className='text-5xl' /> : ""}
+                {weatherData?.weather[0]?.main === "Clouds" && AM_PM === "Night" ? <TiWeatherCloudy className='text-5xl' /> : ""}
+
+                {weatherData?.weather[0]?.main === "Rain" ? <TiWeatherDownpour className='text-5xl' /> : ""}
+
+                {weatherData?.weather[0]?.main === "Drizzle" ? <TiWeatherShower className='text-5xl' /> : ""}
+
+                {weatherData?.weather[0]?.main === "Thunderstorm" ? <TiWeatherStormy className='text-5xl' /> : ""}
+
+                {weatherData?.weather[0]?.id >= 700 &&  weatherData?.weather[0]?.id <= 799? <TiWeatherWindy className='text-5xl' /> : ""}
+
+                {weatherData?.weather[0]?.main === "Snow" ? <TiWeatherSnow className='text-5xl' /> : ""}
+
+              </div>
+
               <p>{(''+weatherData?.main?.temp).substring(0,2)}°</p>
             </div>
 
-            <div className='p-1'>              
+            <div className='p-1 flex flex-col text-center items-center'>              
               <p className='font-thin text-sm'>{forecastData?.list[1]?.dt_txt?.substring(10,16)}</p>
-              <img src={CloudyIcon} className="scale-75" width={55} alt={"Cloudy Weather"} />
+              <div className='m-[0.3rem]'>
+                {forecastData?.list[1]?.weather[0]?.main === "Clear" && AM_PM === "Day" ? <TiWeatherSunny className='text-5xl' /> : ""}
+                {forecastData?.list[1]?.weather[0]?.main === "Clear" && AM_PM === "Night" ? <TiWeatherNight className='text-5xl' /> : ""}
+
+                {forecastData?.list[1]?.weather[0]?.main === "Clouds" && AM_PM === "Day" ? <TiWeatherPartlySunny className='text-5xl' /> : ""}
+                {forecastData?.list[1]?.weather[0]?.main === "Clouds" && AM_PM === "Night" ? <TiWeatherCloudy className='text-5xl' /> : ""}
+
+                {forecastData?.list[1]?.weather[0]?.main === "Rain" ? <TiWeatherDownpour className='text-5xl' /> : ""}
+
+                {forecastData?.list[1]?.weather[0]?.main === "Drizzle" ? <TiWeatherShower className='text-5xl' /> : ""}
+
+                {forecastData?.list[1]?.weather[0]?.main === "Thunderstorm" ? <TiWeatherStormy className='text-5xl' /> : ""}
+
+                {forecastData?.list[1]?.weather[0]?.id >= 700 &&  weatherData?.weather[0]?.id <= 799? <TiWeatherWindy className='text-5xl' /> : ""}
+
+                {forecastData?.list[1]?.weather[0]?.main === "Snow" ? <TiWeatherSnow className='text-5xl' /> : ""}
+
+              </div>
               <p>{('' + forecastData?.list[1]?.main?.temp).substring(0,2)}°</p>
             </div>
 
-            <div className='p-1'>              
+            <div className='p-1 flex flex-col text-center items-center'>             
               <p className='font-thin text-sm'>{forecastData?.list[2]?.dt_txt?.substring(10,16)}</p>
-              <img src={CloudyIcon} className="scale-75" width={55} alt={"Cloudy Weather"} />
+              <div className='m-[0.3rem]'>
+                {forecastData?.list[2]?.weather[0]?.main === "Clear" && AM_PM === "Day" ? <TiWeatherSunny className='text-5xl' /> : ""}
+                {forecastData?.list[2]?.weather[0]?.main === "Clear" && AM_PM === "Night" ? <TiWeatherNight className='text-5xl' /> : ""}
+
+                {forecastData?.list[2]?.weather[0]?.main === "Clouds" && AM_PM === "Day" ? <TiWeatherPartlySunny className='text-5xl' /> : ""}
+                {forecastData?.list[2]?.weather[0]?.main === "Clouds" && AM_PM === "Night" ? <TiWeatherCloudy className='text-5xl' /> : ""}
+
+                {forecastData?.list[2]?.weather[0]?.main === "Rain" ? <TiWeatherDownpour className='text-5xl' /> : ""}
+
+                {forecastData?.list[2]?.weather[0]?.main === "Drizzle" ? <TiWeatherShower className='text-5xl' /> : ""}
+
+                {forecastData?.list[2]?.weather[0]?.main === "Thunderstorm" ? <TiWeatherStormy className='text-5xl' /> : ""}
+
+                {forecastData?.list[2]?.weather[0]?.id >= 700 &&  weatherData?.weather[0]?.id <= 799? <TiWeatherWindy className='text-5xl' /> : ""}
+
+                {forecastData?.list[2]?.weather[0]?.main === "Snow" ? <TiWeatherSnow className='text-5xl' /> : ""}
+
+              </div>
               <p>{('' + forecastData?.list[2]?.main?.temp).substring(0,2)}°</p>
             </div>
 
-            <div className='p-1'>
+            <div className='p-1 flex flex-col text-center items-center'>
               <p className='font-thin text-sm'>Tomorrow</p>
-              <img src={CloudyIcon} className="scale-75 ms-1" width={55} alt={"Cloudy Weather"} />
-              <p>{('' + forecastData?.list[6]?.main?.temp).substring(0,2)}°</p>
+              <div className='m-[0.3rem]'>
+                {forecastData?.list[7]?.weather[0]?.main === "Clear" ? <TiWeatherSunny className='text-5xl' /> : ""}
+
+                {forecastData?.list[7]?.weather[0]?.main === "Clouds" ? <TiWeatherPartlySunny className='text-5xl' /> : ""}
+                
+                {forecastData?.list[7]?.weather[0]?.main === "Rain" ? <TiWeatherDownpour className='text-5xl' /> : ""}
+
+                {forecastData?.list[7]?.weather[0]?.main === "Drizzle" ? <TiWeatherShower className='text-5xl' /> : ""}
+
+                {forecastData?.list[7]?.weather[0]?.main === "Thunderstorm" ? <TiWeatherStormy className='text-5xl' /> : ""}
+
+                {forecastData?.list[7]?.weather[0]?.id >= 700 &&  weatherData?.weather[0]?.id <= 799? <TiWeatherWindy className='text-5xl' /> : ""}
+
+                {forecastData?.list[7]?.weather[0]?.main === "Snow" ? <TiWeatherSnow className='text-5xl' /> : ""}
+
+              </div>
+              <p>{('' + forecastData?.list[7]?.main?.temp).substring(0,2)}°</p>
             </div>
 
-            <div className='p-1'>              
-              <p className='font-thin text-sm'>{days[timeData?.day+2]}</p>
-              <img src={CloudyIcon} className="scale-75" width={55} alt={"Cloudy Weather"} />
-              <p>{('' + forecastData?.list[13]?.main?.temp).substring(0,2)}°</p>
+            <div className='p-1 flex flex-col text-center items-center'>              
+              <p className='font-thin text-sm'>{days[dayAfterTomorrow(timeData?.dayOfWeek)]}</p>
+              <div className='m-[0.3rem]'>
+                {forecastData?.list[14]?.weather[0]?.main === "Clear" ? <TiWeatherSunny className='text-5xl' /> : ""}
+
+                {forecastData?.list[14]?.weather[0]?.main === "Clouds" ? <TiWeatherPartlySunny className='text-5xl' /> : ""}
+                
+                {forecastData?.list[14]?.weather[0]?.main === "Rain" ? <TiWeatherDownpour className='text-5xl' /> : ""}
+
+                {forecastData?.list[14]?.weather[0]?.main === "Drizzle" ? <TiWeatherShower className='text-5xl' /> : ""}
+
+                {forecastData?.list[14]?.weather[0]?.main === "Thunderstorm" ? <TiWeatherStormy className='text-5xl' /> : ""}
+
+                {forecastData?.list[14]?.weather[0]?.id >= 700 &&  weatherData?.weather[0]?.id <= 799? <TiWeatherWindy className='text-5xl' /> : ""}
+
+                {forecastData?.list[14]?.weather[0]?.main === "Snow" ? <TiWeatherSnow className='text-5xl' /> : ""}
+
+              </div>
+              <p>{('' + forecastData?.list[14]?.main?.temp).substring(0,2)}°</p>
             </div>
             
 
@@ -273,46 +470,66 @@ const Weather: React.FC = () => {
 
               <div className={settingsOpen ? "visible" : "invisible"}>
                 <Modal settingsOpen={settingsOpen} onClose={() => setSettingsOpen(false)}>
-                  
-                  <div className='flex flex-row justify-between mt-5 bg-gradient-to-r from-teal-900 from-40% to-cyan-700 scale-[123%] rounded-md p-2'>
-                    <div className='font-poppins font-thin text-xs'>
-                      <div className='flex flex-row gap-1 mb-1'>
-                        <VscCompass className='text-xl'/>
-                        <h3 className='mt-[0.1rem]'>{weatherData?.name}</h3>
+                    <div 
+                      style={{backgroundImage: 'url('+DefaultLocation+')'}}
+                      className={"mt-[2rem] scale-[115%] h-[20rem] rounded-[5%] p-1 align-middle items-center text-center bg-cover relative"}
+                    >
+                      <div className='flex flex-col mt-[6.5rem]'>
+                        <h3 className='drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.5)] font-bold text-4xl'>{weatherData?.name}</h3>
                       </div>
-                      <div className='flex flex-row gap-1 mb-1'>
-                        <BsThermometer className='text-xl'/>
-                        <p className='mt-[0.1rem]'>{(''+weatherData?.main?.temp).substring(0,2)}°C</p>
+
+                      <div className='absolute bottom-0 ms-3 mb-2 h-40 w-60 rounded-xl p-2 bg-gradient-to-r from-cyan-400 from-50% to-purple-300'>
+                          
+                            <div className='font-poppins font-thin text-xs mt-2'>
+                              
+                              <div className='flex flex-row gap-2 mb-2'>
+                                <BsThermometer className='text-xl'/>
+                                <p className='mt-[0.1rem]'>{(''+weatherData?.main?.temp).substring(0,2)}°{useCelsius ? "C" : "F"}</p>
+                              </div>
+                             
+                              <div className='flex flex-row gap-2 mb-2'>
+                                <TiWeatherCloudy className='text-xl'/>
+                                <p className='mt-[0.1rem]'>{weatherData?.weather[0]?.main}</p>
+                              </div>
+                              
+                              <div className='flex flex-row gap-2 mb-2'>
+                                <IoMdInformationCircleOutline className='text-xl'/>
+                                <p className='mt-[0.1rem]'>{weatherData?.weather[0]?.description}</p>
+                              </div>
+
+                              <div className='flex flex-row gap-2 mb-2'>
+                                <GiBlackFlag className='text-xl'/>
+                                <img src={countryFlag} className=" scale-[110%]  object-contain drop-shadow-md" width={64/3} alt={"Country Flag"} />
+                              </div>
+
+                              <div className='flex flex-row mb-1'>
+                               <IoPeopleCircleSharp className='text-xl me-1'/>
+                               <p className='mt-[0.1rem]'>Population: {populationShortner()}</p>
+                              </div>
+
+                            </div>
+                        
                       </div>
-                      <div className='flex flex-row gap-1 mb-1'>
-                        <TiWeatherCloudy className='text-xl'/>
-                        <p className='mt-[0.1rem]'>{weatherData?.weather[0]?.main}</p>
-                      </div>
-                      <div className='flex flex-row gap-1 mb-1'>
-                        <IoMdInformationCircleOutline className='text-xl'/>
-                        <p className='mt-[0.1rem]'>{weatherData?.weather[0]?.description}</p>
-                      </div>
-                      
-                      
-                      
-                    </div>
-                    <img src={DefaultLocation} className="scale-100 rounded-md drop-shadow-md" width={85} alt={"Cloudy Weather"} />
                   </div>
 
 
-                  <div className='mt-7 font-poppins font-thin text-sm'>
+                  <div className='mt-9 font-poppins font-thin text-sm'>
                     <p>Change location</p>
                     <form onSubmit={handleSubmit}>
-                      <input name="location" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="Location" type="text" placeholder="Enter City Name" />
+                      <input name="location" className="shadow mt-1 appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="Location" type="text" placeholder="Enter City Name" />
                     </form>
                     <div className='mt-3'>
                       <p>Degrees unit</p>
                       <div className="flex items-center">
-                        <input id="default-radio-1" type="radio" value="" name="default-radio" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+
+                        {useCelsius == false ? <input id="default-radio-1" readOnly checked type="radio" onClick={() => setUseCelsius(false)} name="default-radio" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" /> : ""}
+                        {useCelsius == true ? <input id="default-radio-1" readOnly type="radio" onClick={() => setUseCelsius(false)} name="default-radio" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" /> : ""}
+
                         <label  className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Fahrenheit</label>
                       </div>
                       <div className="flex items-center">
-                        <input checked id="default-radio-2" type="radio" value="" name="default-radio" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                        {useCelsius == false ? <input id="default-radio-2" readOnly onClick={() => setUseCelsius(true)} type="radio" name="default-radio" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" /> : ""}
+                        {useCelsius == true ? <input id="default-radio-2" checked readOnly onClick={() => setUseCelsius(true)} type="radio" name="default-radio" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" /> : ""}
                         <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Celsius</label>
                       </div>
                     </div>
