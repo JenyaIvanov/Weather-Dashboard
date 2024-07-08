@@ -1,4 +1,4 @@
-![Screenshot 1](https://i.imgur.com/DRg9JM8.png) ![Screenshot 2](https://i.imgur.com/pn2DLRn.png)
+![Screenshot 1](https://i.imgur.com/WfNSE26.png)![Screenshot 2](https://i.imgur.com/1wwtGQB.png)
 
 # Weather Dashboard
 
