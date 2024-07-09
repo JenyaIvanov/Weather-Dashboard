@@ -5,7 +5,7 @@ import Modal from "./Modal";
 
 // Icon Imports
 import { FaWind, FaGear } from "react-icons/fa6";
-import { MdOutlineWaterDrop } from "react-icons/md";
+import { MdOutlineWaterDrop, MdOutlineVisibility } from "react-icons/md";
 import { IoThermometerOutline, IoPeopleCircleSharp } from "react-icons/io5";
 import { BsThermometer, BsThermometerHigh } from "react-icons/bs";
 import DefaultLocation from "./location/DefaultLocation.jpeg";
@@ -96,20 +96,20 @@ const Weather: React.FC = () => {
 
   // Returns the day NUMBER after tomorrow.
   // EX: Sunday (0) -> Tuesday (2)
-  function dayAfterTomorrow(dayName: string) {
-    if (dayName === "Sunday") return 2;
+  function dayAfter(dayName: string, delta: number) {
+    if (dayName === "Sunday") return (2 + delta) % 7;
 
-    if (dayName === "Monday") return 3;
+    if (dayName === "Monday") return (3 + delta) % 7;
 
-    if (dayName === "Tuesday") return 4;
+    if (dayName === "Tuesday") return (4 + delta) % 7;
 
-    if (dayName === "Wednesday") return 5;
+    if (dayName === "Wednesday") return (5 + delta) % 7;
 
-    if (dayName === "Thursday") return 6;
+    if (dayName === "Thursday") return (6 + delta) % 7;
 
-    if (dayName === "Friday") return 0;
+    if (dayName === "Friday") return (0 + delta) % 7;
 
-    if (dayName === "Saturday") return 1;
+    if (dayName === "Saturday") return (1 + delta) % 7;
 
     return 0;
   }
@@ -209,7 +209,7 @@ const Weather: React.FC = () => {
         });
         setWeatherData(weather_response.data);
 
-        //console.log(weather_response.data)
+        //console.log(weather_response.data);
       } catch (error) {
         console.error("Error fetching weather data:", error);
       }
@@ -229,7 +229,7 @@ const Weather: React.FC = () => {
         const forecast_response = await axios.get(backend_url, {
           params: { city: weatherLocation, units: selectedUnits },
         });
-        //console.log(forecast_response.data)
+        //console.log(forecast_response.data);
 
         setForecastData(forecast_response.data);
 
@@ -298,18 +298,19 @@ const Weather: React.FC = () => {
   }
 
   return (
-    <div className="">
+    <div className="sm:bg-cyan-600 sm:bg-opacity-[10%] sm:mx-[20vh] sm:rounded-md sm:drop-shadow-md">
       {weatherData && (
-        <div className="mt-1">
-          {" "}
+        <div className="sm:mx-[30vh] sm:my-[4vh] ">
           {/* Hero Section */}
           {/* Dynamic Background */}
           <div
             style={{ backgroundImage: "url(" + background_image + ")" }}
-            className={"font-poppins h-[30rem] rounded-[8%] p-1 bg-cover"}
+            className={
+              "font-poppins h-[30rem] rounded-[8%] p-1 bg-cover sm:mx-[25vh] sm:scale-[105%] sm:mb-[2vh]"
+            }
           >
             {/* Date */}
-            <div className="flex flex-row mt-4 justify-between ms-[1rem] text-[1.1rem]">
+            <div className="flex flex-row mt-4 justify-between ms-[1rem] sm:text-[1.3rem] text-[1.1rem]">
               <div className="flex items-start">
                 <p className="me-2 drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]">
                   {timeData?.day}
@@ -324,29 +325,25 @@ const Weather: React.FC = () => {
             </div>
 
             {/* Middle Section - Main Temperature */}
-            <div className="ms-[4.5rem] mt-[6.5rem] scale-[115%] flex-row text-center font-poppins">
+            <div className="ms-[4.5rem] mt-[6.5rem] sm:scale-[130%] scale-[115%] flex-row text-center font-poppins">
               <p className="font-normal text-normal mb-[-1.3rem] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.5)]">
-                {" "}
                 {weatherData?.name}
               </p>
               <p className="font-bold text-[4rem] m-[-1rem] drop-shadow-lg">
-                {" "}
                 {("" + weatherData?.main?.temp).substring(0, 2)}°
                 {useCelsius ? "C" : "F"}{" "}
               </p>
               <p className="font-thin text-sm drop-shadow-lg">
-                {" "}
                 Feels Like {Math.floor(weatherData?.main?.feels_like)}°
                 {useCelsius ? "C" : "F"}{" "}
               </p>
               <p className="font-normal text-[1.3rem] m-[-0.4rem] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]">
-                {" "}
                 {weatherData?.weather[0]?.main}
               </p>
             </div>
 
             {/* Bottom Section - Max & Min */}
-            <div className="m-4 p-1 flex flex-row justify-between text-center mt-[10rem] drop-shadow-md text-sm font-poppins font-thin">
+            <div className="m-4 p-1 flex sm:mx-[6vh] sm:my-[16vh] sm:scale-[110%] flex-row justify-between text-center mt-[10rem] drop-shadow-md text-sm font-poppins font-thin">
               <div className="flex gap-1">
                 <BsThermometerHigh className="text-xl" />
                 <p className="drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]">
@@ -367,7 +364,7 @@ const Weather: React.FC = () => {
           {/* Middle Section */}
           <div>
             {/* More Weather Information */}
-            <div className="flex flex-row mt-[0.5rem] m-1 justify-between drop-shadow-md text-[1.2rem]">
+            <div className="sm:mx-[15vh] flex flex-row mt-[0.5rem] m-1 justify-between drop-shadow-md text-[1.2rem]">
               <div className="p-[1.4rem] font-thin rounded-[20%] bg-gradient-to-tl from-blue-400 from-50% to-purple-400">
                 <MdOutlineWaterDrop className="ms-[-0.2rem]" />
                 <p> Humidity </p>
@@ -385,14 +382,26 @@ const Weather: React.FC = () => {
                 <p> Wind </p>
                 <p> {weatherData?.wind?.speed} km/h</p>
               </div>
+
+              <div className="hidden sm:inline p-[1.4rem] font-thin rounded-[20%] bg-gradient-to-b from-blue-400 from-50% to-purple-400">
+                <MdOutlineVisibility className="ms-[0rem]" />
+                <p> Visibility </p>
+                <p> {weatherData?.visibility} m</p>
+              </div>
+
+              <div className="hidden sm:inline p-[1.4rem] font-thin rounded-[20%] bg-gradient-to-b from-blue-400 from-50% to-purple-400">
+                <TiWeatherCloudy className="ms-[0rem] text-[1.3rem]" />
+                <p> Cloudiness </p>
+                <p> {weatherData?.clouds?.all}%</p>
+              </div>
             </div>
 
             {/* Forecast Information */}
             <div
               className="
-                p-2 pt-5 pb-5 text-center items-center align-middle mt-2 mb-2
+                p-2 pt-5 pb-5 text-center items-center align-middle my-2
                 font-poppins flex flex-row justify-between drop-shadow-md
-                bg-zinc-700 bg-opacity-30 rounded-3xl"
+                bg-zinc-700 bg-opacity-30 rounded-3xl sm:py-[2vh] sm:px-[1vh] sm:mx-[8vh] sm:my-[1vh]"
             >
               <div className="p-1 flex flex-col text-center items-center">
                 <p className="font-thin text-sm">NOW</p>
@@ -652,7 +661,7 @@ const Weather: React.FC = () => {
 
               <div className="p-1 flex flex-col text-center items-center">
                 <p className="font-thin text-sm">
-                  {days[dayAfterTomorrow(timeData?.dayOfWeek)]}
+                  {days[dayAfter(timeData?.dayOfWeek, 0)]}
                 </p>
                 <div className="m-[0.3rem]">
                   {forecastData?.list[14]?.weather[0]?.main === "Clear" ? (
@@ -703,13 +712,175 @@ const Weather: React.FC = () => {
                   {("" + forecastData?.list[14]?.main?.temp).substring(0, 2)}°
                 </p>
               </div>
+
+              <div className="hidden sm:flex p-1 flex-col text-center items-center">
+                <p className="font-thin text-sm">
+                  {days[dayAfter(timeData?.dayOfWeek, 1)]}
+                </p>
+                <div className="m-[0.3rem]">
+                  {forecastData?.list[22]?.weather[0]?.main === "Clear" ? (
+                    <TiWeatherSunny className="text-5xl" />
+                  ) : (
+                    ""
+                  )}
+
+                  {forecastData?.list[22]?.weather[0]?.main === "Clouds" ? (
+                    <TiWeatherPartlySunny className="text-5xl" />
+                  ) : (
+                    ""
+                  )}
+
+                  {forecastData?.list[22]?.weather[0]?.main === "Rain" ? (
+                    <TiWeatherDownpour className="text-5xl" />
+                  ) : (
+                    ""
+                  )}
+
+                  {forecastData?.list[22]?.weather[0]?.main === "Drizzle" ? (
+                    <TiWeatherShower className="text-5xl" />
+                  ) : (
+                    ""
+                  )}
+
+                  {forecastData?.list[22]?.weather[0]?.main ===
+                  "Thunderstorm" ? (
+                    <TiWeatherStormy className="text-5xl" />
+                  ) : (
+                    ""
+                  )}
+
+                  {forecastData?.list[22]?.weather[0]?.id >= 700 &&
+                  forecastData?.list[22]?.weather[0]?.id <= 799 ? (
+                    <TiWeatherWindy className="text-5xl" />
+                  ) : (
+                    ""
+                  )}
+
+                  {forecastData?.list[22]?.weather[0]?.main === "Snow" ? (
+                    <TiWeatherSnow className="text-5xl" />
+                  ) : (
+                    ""
+                  )}
+                </div>
+                <p>
+                  {("" + forecastData?.list[22]?.main?.temp).substring(0, 2)}°
+                </p>
+              </div>
+
+              <div className="hidden sm:flex p-1 flex-col text-center items-center">
+                <p className="font-thin text-sm">
+                  {days[dayAfter(timeData?.dayOfWeek, 2)]}
+                </p>
+                <div className="m-[0.3rem]">
+                  {forecastData?.list[30]?.weather[0]?.main === "Clear" ? (
+                    <TiWeatherSunny className="text-5xl" />
+                  ) : (
+                    ""
+                  )}
+
+                  {forecastData?.list[30]?.weather[0]?.main === "Clouds" ? (
+                    <TiWeatherPartlySunny className="text-5xl" />
+                  ) : (
+                    ""
+                  )}
+
+                  {forecastData?.list[30]?.weather[0]?.main === "Rain" ? (
+                    <TiWeatherDownpour className="text-5xl" />
+                  ) : (
+                    ""
+                  )}
+
+                  {forecastData?.list[30]?.weather[0]?.main === "Drizzle" ? (
+                    <TiWeatherShower className="text-5xl" />
+                  ) : (
+                    ""
+                  )}
+
+                  {forecastData?.list[30]?.weather[0]?.main ===
+                  "Thunderstorm" ? (
+                    <TiWeatherStormy className="text-5xl" />
+                  ) : (
+                    ""
+                  )}
+
+                  {forecastData?.list[30]?.weather[0]?.id >= 700 &&
+                  forecastData?.list[30]?.weather[0]?.id <= 799 ? (
+                    <TiWeatherWindy className="text-5xl" />
+                  ) : (
+                    ""
+                  )}
+
+                  {forecastData?.list[30]?.weather[0]?.main === "Snow" ? (
+                    <TiWeatherSnow className="text-5xl" />
+                  ) : (
+                    ""
+                  )}
+                </div>
+                <p>
+                  {("" + forecastData?.list[30]?.main?.temp).substring(0, 2)}°
+                </p>
+              </div>
+
+              <div className="hidden sm:flex p-1 flex-col text-center items-center">
+                <p className="font-thin text-sm">
+                  {days[dayAfter(timeData?.dayOfWeek, 3)]}
+                </p>
+                <div className="m-[0.3rem]">
+                  {forecastData?.list[38]?.weather[0]?.main === "Clear" ? (
+                    <TiWeatherSunny className="text-5xl" />
+                  ) : (
+                    ""
+                  )}
+
+                  {forecastData?.list[38]?.weather[0]?.main === "Clouds" ? (
+                    <TiWeatherPartlySunny className="text-5xl" />
+                  ) : (
+                    ""
+                  )}
+
+                  {forecastData?.list[38]?.weather[0]?.main === "Rain" ? (
+                    <TiWeatherDownpour className="text-5xl" />
+                  ) : (
+                    ""
+                  )}
+
+                  {forecastData?.list[38]?.weather[0]?.main === "Drizzle" ? (
+                    <TiWeatherShower className="text-5xl" />
+                  ) : (
+                    ""
+                  )}
+
+                  {forecastData?.list[38]?.weather[0]?.main ===
+                  "Thunderstorm" ? (
+                    <TiWeatherStormy className="text-5xl" />
+                  ) : (
+                    ""
+                  )}
+
+                  {forecastData?.list[38]?.weather[0]?.id >= 700 &&
+                  forecastData?.list[38]?.weather[0]?.id <= 799 ? (
+                    <TiWeatherWindy className="text-5xl" />
+                  ) : (
+                    ""
+                  )}
+
+                  {forecastData?.list[38]?.weather[0]?.main === "Snow" ? (
+                    <TiWeatherSnow className="text-5xl" />
+                  ) : (
+                    ""
+                  )}
+                </div>
+                <p>
+                  {("" + forecastData?.list[38]?.main?.temp).substring(0, 2)}°
+                </p>
+              </div>
             </div>
           </div>
           {/* Bottom Section */}
-          <footer className=" rounded-lg shadow dark:bg-zinc-800 p-1 align-middle flex flex-row justify-between">
+          <footer className=" rounded-lg shadow bg-zinc-700 bg-opacity-50 p-1 align-middle flex flex-row justify-between">
             <button onClick={() => setSettingsOpen(true)}>
               <div className="m-1 flex flex-row gap-[0.4rem] hover:text-yellow-100">
-                <FaGear className="text-xl mt-[0.15rem]" />
+                <FaGear className="text-xl mt-[0.15rem] sm:ms-[1vh]" />
                 <p className="font-thin">Settings</p>
               </div>
             </button>
