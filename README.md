@@ -5,6 +5,7 @@
 ## Description
 ***
 *This project demonstrates the integration of various technologies to deliver a comprehensive weather application.*
+
 The Weather Dashboard is a modern web application designed to provide users with accurate and up-to-date weather information. By leveraging powerful APIs, the application presents current weather conditions, and location data. The Front-End is built with React and TypeScript, ensuring a seamless and dynamic user experience both on Mobile, Tablet and Desktop. The Back-End, powered by Node.js and Express, efficiently handles data fetching and processing. 
 ***
 
