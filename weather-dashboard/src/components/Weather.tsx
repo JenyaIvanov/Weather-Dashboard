@@ -310,7 +310,7 @@ const Weather: React.FC = () => {
             }
           >
             {/* Date */}
-            <div className="flex flex-row mt-4 justify-between ms-[1rem] md:text-[1.2rem] sm:text-[1.3rem] text-[1.1rem]">
+            <div className="flex flex-row mt-10 justify-between ms-[1rem] md:text-[1.2rem] sm:text-[1.3rem] text-[1.1rem]">
               <div className="flex items-start">
                 <p className="me-2 drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]">
                   {timeData?.day}
@@ -325,7 +325,7 @@ const Weather: React.FC = () => {
             </div>
 
             {/* Middle Section - Main Temperature */}
-            <div className="ms-[4.5rem] mt-[6.5rem] xl:scale-[125%] md:scale-[115%] sm:scale-[130%] scale-[115%] flex-row text-center font-poppins">
+            <div className="ms-[4.5rem] mt-[4.5rem] xl:scale-[125%] md:scale-[115%] sm:scale-[130%] scale-[115%] flex-row text-center font-poppins">
               <p className="font-normal text-normal mb-[-1.3rem] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.5)]">
                 {weatherData?.name}
               </p>
