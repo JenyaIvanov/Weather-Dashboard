@@ -298,9 +298,9 @@ const Weather: React.FC = () => {
   }
 
   return (
-    <div className="lg:mx-[10vh] md:mx-[5vh] md:bg-opacity-[0%] sm:bg-cyan-600 sm:bg-opacity-[10%] sm:mx-[20vh] sm:rounded-md sm:drop-shadow-md">
+    <div className="2xl:mx-[40vh] 2xl:bg-cyan-600 2xl:bg-opacity-[10%] lg:mx-[10vh] md:mx-[5vh] md:bg-opacity-[0%] sm:mx-[20vh] sm:rounded-md sm:drop-shadow-md">
       {weatherData && (
-        <div className="xl:mx-[18vh] xl:scale-[100%] xl:my-[5vh] lg:mx-[8vh] md:scale-[80%] md:my-[-5vh] md:mx-[10vh] sm:mx-[30vh] sm:my-[4vh] ">
+        <div className="2xl:mx-[19vh] xl:mx-[18vh] xl:scale-[100%] xl:my-[5vh] lg:mx-[8vh] md:scale-[80%] md:my-[-5vh] md:mx-[10vh] sm:mx-[30vh] sm:my-[4vh] ">
           {/* Hero Section */}
           {/* Dynamic Background */}
           <div
@@ -408,7 +408,10 @@ const Weather: React.FC = () => {
               className="
                 p-2 pt-5 pb-5 text-center items-center align-middle my-2
                 font-poppins flex flex-row justify-between drop-shadow-md
-                bg-zinc-700 bg-opacity-30 rounded-3xl sm:py-[2vh] sm:px-[1vh] sm:mx-[8vh] sm:my-[1vh]"
+                bg-zinc-700 bg-opacity-30 rounded-3xl 
+                2xl:mx-[3vh] 2xl:px-[1.5vh] 2xl:my-[1vh] 2xl:py-[1.5vh]
+                xl:mx-[2vh] xl:px-[2vh] xl:my-[1vh] xl:py-[1.5vh]
+                sm:py-[2vh] sm:px-[1vh] sm:mx-[8vh] sm:my-[1vh]"
             >
               <div className="p-1 flex flex-col text-center items-center">
                 <p className="font-thin text-sm">NOW</p>

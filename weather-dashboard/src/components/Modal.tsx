@@ -10,7 +10,7 @@ type propTypes = {
 const Modal: React.FC<propTypes> = ({ settingsOpen, onClose, children }) => {
   return (
     <div
-      className="fixed inset-5 mt-5 sm:mt-[10vh] sm:mx-[80vh] sm:scale-[115%]"
+      className="fixed inset-5 mt-5 2xl:mx-[51.2vh] xl:mx-[19vh] lg:mx-[29.5vh] md:mx-[22vh] sm:mt-[10vh] sm:mx-[80vh] sm:scale-[115%]"
       onClick={onClose}
     >
       <div
