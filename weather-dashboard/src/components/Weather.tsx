@@ -298,19 +298,19 @@ const Weather: React.FC = () => {
   }
 
   return (
-    <div className="sm:bg-cyan-600 sm:bg-opacity-[10%] sm:mx-[20vh] sm:rounded-md sm:drop-shadow-md">
+    <div className="lg:mx-[10vh] md:mx-[5vh] md:bg-opacity-[0%] sm:bg-cyan-600 sm:bg-opacity-[10%] sm:mx-[20vh] sm:rounded-md sm:drop-shadow-md">
       {weatherData && (
-        <div className="sm:mx-[30vh] sm:my-[4vh] ">
+        <div className="xl:mx-[18vh] xl:scale-[100%] xl:my-[5vh] lg:mx-[8vh] md:scale-[80%] md:my-[-5vh] md:mx-[10vh] sm:mx-[30vh] sm:my-[4vh] ">
           {/* Hero Section */}
           {/* Dynamic Background */}
           <div
             style={{ backgroundImage: "url(" + background_image + ")" }}
             className={
-              "font-poppins h-[30rem] rounded-[8%] p-1 bg-cover sm:mx-[25vh] sm:scale-[105%] sm:mb-[2vh]"
+              "font-poppins h-[30rem] rounded-[8%] p-1 bg-cover xl:mx-[20vh] lg:mx-[25vh] md:mb-[2.5vh] sm:mx-[25vh] sm:scale-[105%] sm:mb-[2vh]"
             }
           >
             {/* Date */}
-            <div className="flex flex-row mt-4 justify-between ms-[1rem] sm:text-[1.3rem] text-[1.1rem]">
+            <div className="flex flex-row mt-4 justify-between ms-[1rem] md:text-[1.2rem] sm:text-[1.3rem] text-[1.1rem]">
               <div className="flex items-start">
                 <p className="me-2 drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]">
                   {timeData?.day}
@@ -325,7 +325,7 @@ const Weather: React.FC = () => {
             </div>
 
             {/* Middle Section - Main Temperature */}
-            <div className="ms-[4.5rem] mt-[6.5rem] sm:scale-[130%] scale-[115%] flex-row text-center font-poppins">
+            <div className="ms-[4.5rem] mt-[6.5rem] xl:scale-[125%] md:scale-[115%] sm:scale-[130%] scale-[115%] flex-row text-center font-poppins">
               <p className="font-normal text-normal mb-[-1.3rem] drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.5)]">
                 {weatherData?.name}
               </p>
@@ -343,7 +343,14 @@ const Weather: React.FC = () => {
             </div>
 
             {/* Bottom Section - Max & Min */}
-            <div className="m-4 p-1 flex sm:mx-[6vh] sm:my-[16vh] sm:scale-[110%] flex-row justify-between text-center mt-[10rem] drop-shadow-md text-sm font-poppins font-thin">
+            <div
+              className="m-4 p-1 flex drop-shadow-md flex-row text-sm 
+              font-poppins font-thin justify-between text-center mt-[10rem]
+              xl:scale-[110%] xl:my-[15vh] xl:mx-[5vh]
+              lg:scale-[110%] lg:my-[19vh] lg:mx-[8vh]
+              md:scale-[107%] md:my-[19vh] md:mx-[5vh] 
+              sm:mx-[6vh] sm:my-[16vh] sm:scale-[110%]"
+            >
               <div className="flex gap-1">
                 <BsThermometerHigh className="text-xl" />
                 <p className="drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.3)]">
@@ -364,7 +371,7 @@ const Weather: React.FC = () => {
           {/* Middle Section */}
           <div>
             {/* More Weather Information */}
-            <div className="sm:mx-[15vh] flex flex-row mt-[0.5rem] m-1 justify-between drop-shadow-md text-[1.2rem]">
+            <div className="sm:mx-[15vh] md:mx-[7vh] flex flex-row mt-[0.5rem] m-1 justify-between drop-shadow-md text-[1.2rem]">
               <div className="p-[1.4rem] font-thin rounded-[20%] bg-gradient-to-tl from-blue-400 from-50% to-purple-400">
                 <MdOutlineWaterDrop className="ms-[-0.2rem]" />
                 <p> Humidity </p>
